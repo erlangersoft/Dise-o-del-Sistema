@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Casos de Uso - Tutorial PlantUML</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="../node_modules/plantuml-encoder/dist/plantuml-encoder.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎨 Tutorial Interactivo de PlantUML</h1>
+            <p>Aprende a crear diagramas UML con código de texto simple</p>
+        </header>
+
+        <div class="content">
+            <div class="sidebar">
+                <a href="../index.html" class="nav-button">Introducción</a>
+                <a href="sequence.html" class="nav-button">Diagramas de Secuencia</a>
+                <a href="class.html" class="nav-button">Diagramas de Clases</a>
+                <a href="usecase.html" class="nav-button active">Casos de Uso</a>
+                <a href="activity.html" class="nav-button">Diagramas de Actividad</a>
+                <a href="state.html" class="nav-button">Diagramas de Estado</a>
+                <a href="component.html" class="nav-button">Componentes</a>
+                <a href="tips.html" class="nav-button">Tips y Trucos</a>
+            </div>
+
+            <div class="main">
+                <div class="breadcrumb">
+                    <a href="../index.html">Inicio</a>
+                    <span>></span>
+                    <span>Casos de Uso</span>
+                </div>
+                
+                <div class="section active">
+                    <h2>Diagramas de Casos de Uso</h2>
+                    <p>Los diagramas de casos de uso describen las funcionalidades del sistema desde la perspectiva del usuario, mostrando qué puede hacer cada tipo de usuario y cómo interactúa con el sistema.</p>
+
+                    <div class="info">
+                        <strong>🎯 Objetivo de aprendizaje:</strong><br>
+                        Al completar esta sección, podrás identificar y modelar todos los casos de uso de un sistema, incluyendo actores, relaciones y límites del sistema.
+                    </div>
+
+                    <h3>Elementos Básicos</h3>
+                    <ul>
+                        <li><code>actor</code> : Define un actor (usuario del sistema)</li>
+                        <li><code>usecase</code> : Define un caso de uso</li>
+                        <li><code>rectangle</code> : Define los límites del sistema</li>
+                        <li><code>--></code> : Asociación actor-caso de uso</li>
+                        <li><code>..></code> : Relación include o extend</li>
+                        <li><code><<include>></code> : Dependencia obligatoria</li>
+                        <li><code><<extend>></code> : Funcionalidad opcional</li>
+                    </ul>
+
+                    <div class="example">
+                        <h4>Ejemplo 1: Sistema Bancario Básico</h4>
+                        <textarea id="usecase-basic-code">@startuml
+actor Cliente
+actor "Empleado del Banco" as Empleado
+actor "Sistema de Seguridad" as Sistema
+
+rectangle "Sistema Bancario Online" {
+    usecase "Consultar Saldo" as UC1
+    usecase "Transferir Dinero" as UC2
+    usecase "Pagar Servicios" as UC3
+    usecase "Solicitar Préstamo" as UC4
+    usecase "Autenticar Usuario" as UC5
+    usecase "Aprobar Préstamo" as UC6
+    usecase "Verificar Identidad" as UC7
+}
+
+Cliente --> UC1
+Cliente --> UC2
+Cliente --> UC3
+Cliente --> UC4
+
+Empleado --> UC6
+
+UC2 ..> UC5 : <<include>>
+UC4 ..> UC5 : <<include>>
+UC4 ..> UC7 : <<include>>
+
+UC6 ..> UC7 : <<include>>
+Sistema --> UC5
+Sistema --> UC7
+
+note right of UC4
+  Los préstamos requieren
+  aprobación del empleado
+end note
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('usecase-basic-code', 'usecase-basic-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="usecase-basic-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Relaciones entre Casos de Uso</h3>
+                    <h4>Include vs Extend</h4>
+                    <ul>
+                        <li><strong>Include:</strong> El caso de uso base siempre ejecuta el caso incluido</li>
+                        <li><strong>Extend:</strong> El caso extendido se ejecuta solo bajo ciertas condiciones</li>
+                        <li><strong>Generalización:</strong> Casos de uso especializados heredan de uno general</li>
+                    </ul>
+
+                    <div class="example">
+                        <h4>Ejemplo 2: E-commerce con Relaciones Complejas</h4>
+                        <textarea id="usecase-ecommerce-code">@startuml
+left to right direction
+
+actor Cliente
+actor "Cliente Registrado" as ClienteReg
+actor "Cliente Premium" as ClientePrem
+actor Administrador
+actor "Sistema de Pago" as SistemaPago
+actor "Servicio de Envío" as ServicioEnvio
+
+rectangle "Plataforma E-commerce" {
+    usecase "Buscar Productos" as UC1
+    usecase "Ver Detalles de Producto" as UC2
+    usecase "Agregar al Carrito" as UC3
+    usecase "Realizar Compra" as UC4
+    usecase "Registrarse" as UC5
+    usecase "Iniciar Sesión" as UC6
+    usecase "Procesar Pago" as UC7
+    usecase "Calcular Envío" as UC8
+    usecase "Aplicar Descuento" as UC9
+    usecase "Generar Factura" as UC10
+    usecase "Rastrear Pedido" as UC11
+    usecase "Gestionar Productos" as UC12
+    usecase "Ver Historial de Compras" as UC13
+    usecase "Obtener Puntos de Fidelidad" as UC14
+    usecase "Acceder a Ofertas Exclusivas" as UC15
+}
+
+' Relaciones de herencia entre actores
+Cliente <|-- ClienteReg
+ClienteReg <|-- ClientePrem
+
+' Casos de uso para todos los clientes
+Cliente --> UC1
+Cliente --> UC2
+Cliente --> UC3
+Cliente --> UC5
+
+' Casos de uso para clientes registrados
+ClienteReg --> UC4
+ClienteReg --> UC6
+ClienteReg --> UC11
+ClienteReg --> UC13
+
+' Casos de uso para clientes premium
+ClientePrem --> UC15
+ClientePrem --> UC14
+
+' Casos de uso para administrador
+Administrador --> UC12
+
+' Sistemas externos
+SistemaPago --> UC7
+ServicioEnvio --> UC8
+
+' Relaciones include (obligatorias)
+UC4 ..> UC6 : <<include>>
+UC4 ..> UC7 : <<include>>
+UC4 ..> UC8 : <<include>>
+UC4 ..> UC10 : <<include>>
+
+' Relaciones extend (opcionales)
+UC9 ..> UC4 : <<extend>>
+UC14 ..> UC4 : <<extend>>
+
+' Relaciones de generalización
+UC13 <|-- UC11 : especializa
+
+note right of UC9
+  Los descuentos se aplican
+  automáticamente si el cliente
+  cumple con las condiciones
+end note
+
+note bottom of UC15
+  Solo disponible para
+  clientes premium con más
+  de 6 meses de antigüedad
+end note
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('usecase-ecommerce-code', 'usecase-ecommerce-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="usecase-ecommerce-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Sistemas con Múltiples Subsistemas</h3>
+
+                    <div class="example">
+                        <h4>Ejemplo 3: Hospital - Sistema Integrado</h4>
+                        <textarea id="usecase-hospital-code">@startuml
+!define RECTANGLE_COLOR #E1F5FE
+!define USECASE_COLOR #FFF3E0
+
+skinparam rectangle {
+    BackgroundColor RECTANGLE_COLOR
+    BorderColor #0277BD
+}
+
+skinparam usecase {
+    BackgroundColor USECASE_COLOR
+    BorderColor #F57C00
+}
+
+actor Paciente
+actor Médico
+actor Enfermera
+actor "Personal Administrativo" as Admin
+actor "Sistema de Laboratorio" as Lab
+actor "Sistema de Farmacia" as Farmacia
+
+rectangle "Sistema de Gestión Hospitalaria" {
+    
+    package "Subsistema de Citas" {
+        usecase "Solicitar Cita" as UC1
+        usecase "Confirmar Cita" as UC2
+        usecase "Reprogramar Cita" as UC3
+        usecase "Cancelar Cita" as UC4
+    }
+    
+    package "Subsistema de Historia Clínica" {
+        usecase "Crear Historia Clínica" as UC5
+        usecase "Consultar Historia" as UC6
+        usecase "Actualizar Historia" as UC7
+        usecase "Registrar Diagnóstico" as UC8
+    }
+    
+    package "Subsistema de Tratamiento" {
+        usecase "Prescribir Medicamento" as UC9
+        usecase "Solicitar Examen" as UC10
+        usecase "Registrar Signos Vitales" as UC11
+        usecase "Planificar Cirugía" as UC12
+    }
+    
+    package "Subsistema de Facturación" {
+        usecase "Generar Factura" as UC13
+        usecase "Procesar Seguro" as UC14
+        usecase "Registrar Pago" as UC15
+    }
+    
+    usecase "Autenticar Usuario" as UC16
+    usecase "Validar Credenciales Médicas" as UC17
+    usecase "Verificar Disponibilidad" as UC18
+    usecase "Notificar Recordatorio" as UC19
+}
+
+' Relaciones de actores con casos de uso
+Paciente --> UC1
+Paciente --> UC3
+Paciente --> UC4
+Paciente --> UC6
+
+Admin --> UC2
+Admin --> UC13
+Admin --> UC15
+
+Médico --> UC5
+Médico --> UC6
+Médico --> UC7
+Médico --> UC8
+Médico --> UC9
+Médico --> UC10
+Médico --> UC12
+
+Enfermera --> UC11
+Enfermera --> UC6
+
+' Sistemas externos
+Lab --> UC10
+Farmacia --> UC9
+
+' Relaciones include
+UC1 ..> UC16 : <<include>>
+UC5 ..> UC17 : <<include>>
+UC2 ..> UC18 : <<include>>
+UC8 ..> UC7 : <<include>>
+UC9 ..> UC8 : <<include>>
+UC13 ..> UC14 : <<include>>
+
+' Relaciones extend
+UC19 ..> UC1 : <<extend>>
+UC12 ..> UC8 : <<extend>>
+
+' Generalización
+UC3 --|> UC1
+UC4 --|> UC1
+
+note top of "Subsistema de Citas"
+    Maneja toda la programación
+    de citas médicas
+end note
+
+note right of UC17
+    Solo personal médico
+    certificado puede acceder
+    a funciones clínicas
+end note
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('usecase-hospital-code', 'usecase-hospital-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="usecase-hospital-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Casos de Uso con Condiciones y Excepciones</h3>
+
+                    <div class="example">
+                        <h4>Ejemplo 4: ATM - Cajero Automático</h4>
+                        <textarea id="usecase-atm-code">@startuml
+actor Cliente
+actor "Sistema Bancario" as Banco
+actor "Servicio de Mantenimiento" as Mantenimiento
+
+rectangle "Cajero Automático" {
+    usecase "Retirar Dinero" as UC1
+    usecase "Consultar Saldo" as UC2
+    usecase "Transferir Fondos" as UC3
+    usecase "Cambiar PIN" as UC4
+    usecase "Depositar Dinero" as UC5
+    
+    ' Casos de uso base
+    usecase "Insertar Tarjeta" as UC6
+    usecase "Ingresar PIN" as UC7
+    usecase "Seleccionar Idioma" as UC8
+    
+    ' Casos excepcionales
+    usecase "Manejar Tarjeta Bloqueada" as UC9
+    usecase "Manejar Fondos Insuficientes" as UC10
+    usecase "Manejar Error de Conexión" as UC11
+    usecase "Retener Tarjeta" as UC12
+    
+    ' Casos de mantenimiento
+    usecase "Recargar Billetes" as UC13
+    usecase "Limpiar Lector" as UC14
+    usecase "Generar Reporte" as UC15
+}
+
+Cliente --> UC1
+Cliente --> UC2
+Cliente --> UC3
+Cliente --> UC4
+Cliente --> UC5
+
+Banco --> UC6
+Banco --> UC9
+Banco --> UC11
+Banco --> UC12
+
+Mantenimiento --> UC13
+Mantenimiento --> UC14
+Mantenimiento --> UC15
+
+' Relaciones include (siempre se ejecutan)
+UC1 ..> UC6 : <<include>>
+UC2 ..> UC6 : <<include>>
+UC3 ..> UC6 : <<include>>
+UC4 ..> UC6 : <<include>>
+UC5 ..> UC6 : <<include>>
+
+UC1 ..> UC7 : <<include>>
+UC2 ..> UC7 : <<include>>
+UC3 ..> UC7 : <<include>>
+UC4 ..> UC7 : <<include>>
+UC5 ..> UC7 : <<include>>
+
+' Relaciones extend (condicionalmente)
+UC8 ..> UC6 : <<extend>>
+UC9 ..> UC7 : <<extend>>
+UC10 ..> UC1 : <<extend>>
+UC11 ..> UC1 : <<extend>>
+UC11 ..> UC2 : <<extend>>
+UC11 ..> UC3 : <<extend>>
+UC12 ..> UC9 : <<extend>>
+
+note right of UC8
+  El cliente puede cambiar
+  el idioma en cualquier momento
+end note
+
+note bottom of UC10
+  Se ejecuta cuando el cliente
+  intenta retirar más dinero
+  del disponible en su cuenta
+end note
+
+note left of UC12
+  La tarjeta se retiene después
+  de 3 intentos fallidos de PIN
+  o si está reportada como robada
+end note
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('usecase-atm-code', 'usecase-atm-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="usecase-atm-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Ejercicios Prácticos</h3>
+
+                    <div class="example">
+                        <h4>Ejercicio 1: Sistema de Gestión Universitaria</h4>
+                        <p>Completa este diagrama para un sistema universitario con:</p>
+                        <ul>
+                            <li>Estudiantes, Profesores, Personal Administrativo</li>
+                            <li>Inscripción a materias, consulta de notas, programación de clases</li>
+                            <li>Relaciones include/extend apropiadas</li>
+                        </ul>
+                        <textarea id="usecase-exercise-code">@startuml
+actor Estudiante
+actor Profesor
+actor "Personal Administrativo" as Admin
+
+rectangle "Sistema Universitario" {
+    usecase "Inscribir Materia" as UC1
+    usecase "Consultar Notas" as UC2
+    usecase "Ver Horario de Clases" as UC3
+    
+    ' Agrega más casos de uso
+    usecase "Autenticar Usuario" as UC_Auth
+    
+    ' Completa el diagrama con más casos de uso
+    ' y sus relaciones correspondientes
+}
+
+Estudiante --> UC1
+Estudiante --> UC2
+Estudiante --> UC3
+
+' Agrega más relaciones
+UC1 ..> UC_Auth : <<include>>
+
+' Completa las relaciones restantes
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('usecase-exercise-code', 'usecase-exercise-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="usecase-exercise-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Consejos y Mejores Prácticas</h3>
+                    <div class="tip">
+                        <strong>💡 Tips para Casos de Uso:</strong><br>
+                        • Identifica todos los actores externos al sistema<br>
+                        • Usa verbos activos para nombrar casos de uso<br>
+                        • Mantén casos de uso a nivel de objetivo del usuario<br>
+                        • Evita incluir detalles de implementación<br>
+                        • Usa packages para organizar casos relacionados
+                    </div>
+
+                    <h3>Reglas para Relaciones</h3>
+                    <div class="info">
+                        <strong>📋 Cuándo usar cada relación:</strong><br>
+                        • <strong>Include:</strong> Cuando un comportamiento es siempre necesario<br>
+                        • <strong>Extend:</strong> Para funcionalidad opcional o excepcional<br>
+                        • <strong>Generalización:</strong> Cuando casos específicos heredan de uno general<br>
+                        • <strong>Asociación:</strong> Relación directa entre actor y caso de uso
+                    </div>
+
+                    <h3>Comandos Útiles Específicos</h3>
+                    <ul>
+                        <li><code>left to right direction</code> : Cambia orientación del diagrama</li>
+                        <li><code>package</code> : Agrupa casos de uso relacionados</li>
+                        <li><code>skinparam</code> : Personaliza colores y estilos</li>
+                        <li><code>!define</code> : Define constantes para reutilizar</li>
+                        <li><code>boundary/control/entity</code> : Estereotipos especiales</li>
+                    </ul>
+
+                    <div class="warning">
+                        <strong>⚠️ Errores Comunes:</strong><br>
+                        • Incluir detalles de interfaz de usuario en casos de uso<br>
+                        • Confundir actores con roles del sistema<br>
+                        • Usar include cuando debería ser extend<br>
+                        • Crear casos de uso demasiado granulares o muy generales<br>
+                        • No definir claramente los límites del sistema
+                    </div>
+
+                    <div class="info">
+                        <strong>🔍 Proceso de Identificación:</strong><br>
+                        1. <strong>Identifica actores:</strong> ¿Quién usa el sistema?<br>
+                        2. <strong>Define objetivos:</strong> ¿Qué quiere lograr cada actor?<br>
+                        3. <strong>Describe casos base:</strong> Flujo principal de cada objetivo<br>
+                        4. <strong>Identifica variantes:</strong> Flujos alternativos y excepciones<br>
+                        5. <strong>Establece relaciones:</strong> Include, extend, generalización
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer style="background: #f8f9fa; padding: 20px; text-align: center; margin-top: 40px; border-top: 1px solid #e0e0e0;">
+        <p style="color: #666; margin: 0;">
+            © 2025 Tutorial PlantUML | 
+            <a href="https://plantuml.com" target="_blank" style="color: #667eea;">Documentación Oficial</a> | 
+            <a href="https://github.com" target="_blank" style="color: #667eea;">GitHub</a>
+        </p>
+        <p style="color: #888; font-size: 0.9em; margin: 10px 0 0 0;">
+            Creado para la comunidad de desarrolladores
+        </p>
+    </footer>
+
+    <script src="../js/main.js"></script>
+</body>
+</html>

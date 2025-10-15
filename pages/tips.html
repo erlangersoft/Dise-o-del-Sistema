@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tips y Trucos - Tutorial PlantUML</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="../node_modules/plantuml-encoder/dist/plantuml-encoder.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎨 Tutorial Interactivo de PlantUML</h1>
+            <p>Aprende a crear diagramas UML con código de texto simple</p>
+        </header>
+
+        <div class="content">
+            <div class="sidebar">
+                <a href="../index.html" class="nav-button">Introducción</a>
+                <a href="sequence.html" class="nav-button">Diagramas de Secuencia</a>
+                <a href="class.html" class="nav-button">Diagramas de Clases</a>
+                <a href="usecase.html" class="nav-button">Casos de Uso</a>
+                <a href="activity.html" class="nav-button">Diagramas de Actividad</a>
+                <a href="state.html" class="nav-button">Diagramas de Estado</a>
+                <a href="component.html" class="nav-button">Componentes</a>
+                <a href="tips.html" class="nav-button active">Tips y Trucos</a>
+            </div>
+
+            <div class="main">
+                <div class="breadcrumb">
+                    <a href="../index.html">Inicio</a>
+                    <span>></span>
+                    <span>Tips y Trucos</span>
+                </div>
+                
+                <div class="section active">
+                    <h2>Tips y Trucos Avanzados</h2>
+                    <p>Descubre técnicas profesionales, mejores prácticas y trucos avanzados para crear diagramas PlantUML excepcionales y mejorar tu productividad.</p>
+
+                    <div class="info">
+                        <strong>🎯 Objetivo:</strong><br>
+                        Dominar técnicas avanzadas de PlantUML para crear diagramas profesionales, optimizar flujo de trabajo y mantener documentación técnica de alta calidad.
+                    </div>
+
+                    <h3>🎨 Personalización Avanzada</h3>
+                    
+                    <h4>Temas y Estilos Personalizados</h4>
+                    <div class="example">
+                        <h4>Ejemplo 1: Tema Corporativo Personalizado</h4>
+                        <textarea id="tips-theme-code">@startuml
+!theme aws-orange
+
+' Definición de colores corporativos
+!define PRIMARY_COLOR #1f4e79
+!define SECONDARY_COLOR #e67e22
+!define SUCCESS_COLOR #27ae60
+!define WARNING_COLOR #f39c12
+!define DANGER_COLOR #e74c3c
+
+' Configuración global del tema
+skinparam backgroundColor #f8f9fa
+skinparam handwritten false
+skinparam shadowing false
+skinparam roundCorner 10
+skinparam linetype ortho
+
+' Estilos para clases
+skinparam class {
+    BackgroundColor PRIMARY_COLOR
+    BorderColor #2c3e50
+    FontColor white
+    FontSize 12
+    FontName Arial
+    HeaderBackgroundColor SECONDARY_COLOR
+    AttributeIconSize 0
+}
+
+' Estilos para paquetes
+skinparam package {
+    BackgroundColor #ecf0f1
+    BorderColor PRIMARY_COLOR
+    FontColor PRIMARY_COLOR
+    FontSize 14
+    FontStyle bold
+}
+
+' Estilos para notas
+skinparam note {
+    BackgroundColor #fff9c4
+    BorderColor WARNING_COLOR
+    FontColor #333
+}
+
+package "Sistema de Autenticación" <<Frame>> {
+    abstract class AuthProvider {
+        +authenticate(credentials)
+        +validateToken(token)
+        #logAttempt(user)
+    }
+    
+    class GoogleAuth extends AuthProvider {
+        -clientId: String
+        -clientSecret: String
+        +authenticate(googleToken)
+    }
+    
+    class LocalAuth extends AuthProvider {
+        -passwordEncoder: PasswordEncoder
+        +authenticate(username, password)
+        +hashPassword(password)
+    }
+    
+    class JWTService {
+        -secretKey: String
+        -expirationTime: Long
+        +generateToken(user): String
+        +validateToken(token): Boolean
+        +extractClaims(token): Claims
+    }
+}
+
+package "Modelo de Usuario" <<Database>> {
+    class User {
+        +id: UUID
+        +email: String
+        +hashedPassword: String
+        +roles: List<Role>
+        +createdAt: LocalDateTime
+        +lastLogin: LocalDateTime
+        +isActive(): Boolean
+        +hasRole(role): Boolean
+    }
+    
+    enum Role {
+        ADMIN
+        USER
+        MODERATOR
+        GUEST
+    }
+}
+
+AuthProvider --> JWTService : uses
+GoogleAuth --> User : creates
+LocalAuth --> User : validates
+User --> Role : has
+
+note right of AuthProvider
+    Patrón Strategy para
+    múltiples proveedores
+    de autenticación
+end note
+
+note bottom of JWTService
+    JWT tokens expiran
+    automáticamente después
+    de 24 horas por seguridad
+end note
+
+legend right
+|Color|Significado|
+|<back:PRIMARY_COLOR>   </back>|Servicios Core|
+|<back:SECONDARY_COLOR>   </back>|Interfaces Públicas|
+|<back:#ecf0f1>   </back>|Modelos de Datos|
+end legend
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('tips-theme-code', 'tips-theme-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="tips-theme-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4>Macros y Definiciones Reutilizables</h4>
+                    <div class="example">
+                        <h4>Ejemplo 2: Sistema de Macros para Microservicios</h4>
+                        <textarea id="tips-macros-code">@startuml
+' Definición de macros reutilizables
+!define MICROSERVICE(name,port,tech) rectangle name as "name\n:port\n[tech]" <<microservice>>
+!define DATABASE(name,type) database name as "name\n[type]" <<database>>
+!define QUEUE(name,type) queue name as "name\n[type]" <<message_queue>>
+!define EXTERNAL_API(name,provider) cloud name as "name\n(provider)" <<external>>
+
+' Macros para conexiones
+!define HTTP_CALL(from,to,path) from -right-> to : HTTP\npath
+!define ASYNC_MSG(from,to,msg) from -down->> to : msg\n(async)
+!define DATA_FLOW(from,to,type) from -up-> to : type
+
+' Colores por tipo de componente
+skinparam rectangle<<microservice>> {
+    BackgroundColor #e3f2fd
+    BorderColor #1976d2
+}
+
+skinparam database<<database>> {
+    BackgroundColor #e8f5e8
+    BorderColor #388e3c
+}
+
+skinparam queue<<message_queue>> {
+    BackgroundColor #fff3e0
+    BorderColor #f57c00
+}
+
+skinparam cloud<<external>> {
+    BackgroundColor #fce4ec
+    BorderColor #c2185b
+}
+
+title Sistema E-commerce con Microservicios\nUsando Macros Personalizadas
+
+package "Frontend Layer" {
+    MICROSERVICE(WebApp,3000,React)
+    MICROSERVICE(MobileApp,N/A,Flutter)
+}
+
+package "API Gateway" {
+    MICROSERVICE(Gateway,8080,Kong)
+}
+
+package "Core Services" {
+    MICROSERVICE(UserService,8001,Node.js)
+    MICROSERVICE(ProductService,8002,Python)
+    MICROSERVICE(OrderService,8003,Java)
+    MICROSERVICE(PaymentService,8004,Go)
+    MICROSERVICE(NotificationService,8005,Node.js)
+}
+
+package "Data Layer" {
+    DATABASE(UserDB,PostgreSQL)
+    DATABASE(ProductDB,MongoDB)
+    DATABASE(OrderDB,PostgreSQL)
+    DATABASE(Cache,Redis)
+}
+
+package "Message Infrastructure" {
+    QUEUE(OrderQueue,RabbitMQ)
+    QUEUE(NotificationQueue,Apache Kafka)
+}
+
+package "External Services" {
+    EXTERNAL_API(StripeAPI,Stripe)
+    EXTERNAL_API(SendGridAPI,SendGrid)
+    EXTERNAL_API(AWSStorage,Amazon S3)
+}
+
+' Conexiones usando macros
+HTTP_CALL(WebApp,Gateway,/api/*)
+HTTP_CALL(MobileApp,Gateway,/api/*)
+
+HTTP_CALL(Gateway,UserService,/users/*)
+HTTP_CALL(Gateway,ProductService,/products/*)
+HTTP_CALL(Gateway,OrderService,/orders/*)
+
+DATA_FLOW(UserService,UserDB,SQL)
+DATA_FLOW(ProductService,ProductDB,NoSQL)
+DATA_FLOW(OrderService,OrderDB,SQL)
+
+ASYNC_MSG(OrderService,OrderQueue,order_created)
+ASYNC_MSG(OrderQueue,NotificationService,process_notification)
+ASYNC_MSG(OrderQueue,PaymentService,process_payment)
+
+HTTP_CALL(PaymentService,StripeAPI,/charges)
+HTTP_CALL(NotificationService,SendGridAPI,/mail/send)
+
+' Caching connections
+UserService -up-> Cache : read/write\nuser sessions
+ProductService -up-> Cache : cache\nproduct catalog
+
+note right of Gateway
+    Kong Gateway provide:
+    • Rate limiting
+    • Authentication
+    • Load balancing
+    • Request/Response transformation
+end note
+
+note bottom of "Message Infrastructure"
+    Asynchronous messaging ensures:
+    • Loose coupling between services
+    • Better fault tolerance
+    • Improved scalability
+end note
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('tips-macros-code', 'tips-macros-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="tips-macros-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>🚀 Integración con Herramientas de Desarrollo</h3>
+
+                    <div class="tip">
+                        <strong>💡 Visual Studio Code:</strong><br>
+                        • Instalar extensión "PlantUML" para preview en tiempo real<br>
+                        • Usar snippets personalizados para diagramas comunes<br>
+                        • Configurar auto-save para renderizado automático<br>
+                        • Integrar con Git para versionado de diagramas
+                    </div>
+
+                    <div class="tip">
+                        <strong>🔧 IntelliJ IDEA / WebStorm:</strong><br>
+                        • Plugin "PlantUML integration" con soporte completo<br>
+                        • Validación de sintaxis en tiempo real<br>
+                        • Generación automática desde código fuente<br>
+                        • Exportación directa a múltiples formatos
+                    </div>
+
+                    <div class="tip">
+                        <strong>📚 Documentación en Markdown:</strong><br>
+                        • Embebido directo en README.md usando URLs de PlantUML<br>
+                        • Integración con GitLab/GitHub Pages<br>
+                        • Actualización automática en pipelines CI/CD<br>
+                        • Versionado junto con el código fuente
+                    </div>
+
+                    <h3>⚡ Optimización de Rendimiento</h3>
+
+                    <div class="example">
+                        <h4>Ejemplo 3: Técnicas de Optimización</h4>
+                        <textarea id="tips-optimization-code">@startuml
+!theme spacelab
+
+' Usar !include para reutilizar definiciones
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+' Configuración optimizada para diagramas grandes
+!define DIRECTION top to bottom direction
+DIRECTION
+
+' Reducir detalles visuales para mejor rendimiento
+skinparam handwritten false
+skinparam shadowing false
+skinparam linetype polyline
+
+' Usar alias para elementos repetitivos
+!define USER(alias, label) Person(alias, label, "Usuario del Sistema")
+!define SERVICE(alias, label, tech) Container(alias, label, tech, "Microservicio")
+!define DB(alias, label, tech) ContainerDb(alias, label, tech, "Base de Datos")
+
+title Arquitectura de Alto Nivel - Vista Optimizada
+!include <awslib/AWSCommon>
+!include <awslib/ApplicationIntegration/APIGateway>
+!include <awslib/Compute/Lambda>
+!include <awslib/Database/RDS>
+
+' Definir usuarios una sola vez
+USER(customer, "Cliente")
+USER(admin, "Administrador") 
+USER(support, "Soporte Técnico")
+
+System_Boundary(c1, "Sistema E-commerce Optimizado") {
+    ' Frontend simplificado
+    Container(web, "Aplicación Web", "React + TypeScript", "SPA optimizada con lazy loading")
+    Container(mobile, "App Móvil", "React Native", "Aplicación nativa cross-platform")
+    
+    ' API Gateway único
+    Container(gateway, "API Gateway", "Kong + Redis", "Gateway unificado con caché")
+    
+    ' Servicios core agrupados lógicamente
+    System_Boundary(core, "Servicios Principales") {
+        SERVICE(auth, "Autenticación", "Node.js + JWT")
+        SERVICE(catalog, "Catálogo", "Python + FastAPI")  
+        SERVICE(orders, "Pedidos", "Java Spring Boot")
+        SERVICE(payments, "Pagos", "Go + Gin")
+    }
+    
+    ' Datos agrupados por dominio
+    System_Boundary(data, "Capa de Datos") {
+        DB(userdb, "Usuarios", "PostgreSQL")
+        DB(catalogdb, "Productos", "MongoDB")
+        DB(orderdb, "Transacciones", "PostgreSQL")
+        ContainerDb(cache, "Caché", "Redis Cluster", "Caché distribuido")
+    }
+}
+
+' Servicios externos agrupados
+System_Ext(stripe, "Stripe API", "Procesamiento de pagos")
+System_Ext(cdn, "CloudFlare CDN", "Distribución de contenido")
+System_Ext(monitoring, "DataDog", "Monitoreo y logging")
+
+' Conexiones principales (evitar over-engineering)
+Rel(customer, web, "Usa")
+Rel(customer, mobile, "Usa")
+Rel(admin, web, "Administra")
+
+Rel(web, gateway, "HTTPS/REST")
+Rel(mobile, gateway, "HTTPS/REST")
+
+Rel(gateway, auth, "Autenticación")
+Rel(gateway, catalog, "Consultas de productos")
+Rel(gateway, orders, "Gestión de pedidos")
+
+' Datos críticos solamente
+Rel(auth, userdb, "CRUD usuarios")
+Rel(catalog, catalogdb, "Consulta productos")
+Rel(orders, orderdb, "Transacciones")
+
+' Cache strategy simplificada
+Rel(catalog, cache, "Cache productos populares")
+Rel(auth, cache, "Sesiones de usuario")
+
+' Servicios externos esenciales
+Rel(orders, stripe, "Procesar pagos")
+Rel_Back(cdn, web, "Archivos estáticos")
+Rel(gateway, monitoring, "Métricas y logs")
+
+SHOW_LEGEND()
+
+note right of gateway
+    Optimizaciones aplicadas:
+    • Rate limiting inteligente
+    • Compresión gzip/brotli  
+    • Connection pooling
+    • Circuit breaker pattern
+    • Request batching
+end note
+
+note bottom of cache
+    Estrategia de cache:
+    • TTL adaptativo
+    • Cache warming
+    • Invalidación selectiva
+    • Monitoring de hit ratio
+end note
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('tips-optimization-code', 'tips-optimization-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="tips-optimization-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>🎯 Mejores Prácticas de Documentación</h3>
+
+                    <div class="info">
+                        <strong>📋 Principios de Documentación Efectiva:</strong><br>
+                        1. <strong>Una verdad, una fuente:</strong> El código y los diagramas deben estar sincronizados<br>
+                        2. <strong>Niveles apropiados:</strong> Diferentes audiencias requieren diferentes niveles de detalle<br>
+                        3. <strong>Actualización continua:</strong> Los diagramas deben evolucionar con el código<br>
+                        4. <strong>Contexto claro:</strong> Cada diagrama debe tener propósito y audiencia definidos<br>
+                        5. <strong>Consistencia visual:</strong> Usar estilos y convenciones uniformes
+                    </div>
+
+                    <h4>Estrategias de Versionado</h4>
+                    <div class="tip">
+                        <strong>🗂️ Organización de Archivos PlantUML:</strong>
+                        <pre><code>docs/
+├── architecture/
+│   ├── high-level/
+│   │   ├── system-context.puml
+│   │   └── container-view.puml
+│   ├── detailed/
+│   │   ├── sequence-diagrams/
+│   │   ├── class-diagrams/
+│   │   └── component-diagrams/
+│   └── deployment/
+│       ├── prod-environment.puml
+│       └── staging-environment.puml
+├── styles/
+│   ├── corporate-theme.puml
+│   ├── macros.puml
+│   └── color-palette.puml
+└── generated/
+    ├── images/
+    └── reports/</code></pre>
+                    </div>
+
+                    <h3>🔧 Automatización y CI/CD</h3>
+
+                    <div class="example">
+                        <h4>Ejemplo 4: Pipeline de Documentación Automática</h4>
+                        <textarea id="tips-automation-code">@startuml
+!theme vibrant
+
+title Pipeline de Documentación Automática
+skinparam backgroundColor #f8f9fa
+
+actor Developer as dev
+participant "Git Repository" as git
+participant "GitHub Actions" as ci
+participant "PlantUML Server" as plantuml
+participant "Documentation Site" as docs
+participant "Slack/Teams" as notify
+database "Artifact Store" as artifacts
+
+dev -> git : git push
+note right : Código + diagramas\n.puml actualizados
+
+git -> ci : webhook trigger
+activate ci
+
+ci -> ci : checkout code
+ci -> ci : detect .puml changes
+note right : Usa git diff para\ndetectar archivos modificados
+
+alt Diagramas modificados
+    ci -> plantuml : render diagrams
+    note right : Conversión batch\n.puml → .png/.svg
+    
+    plantuml -> ci : generated images
+    
+    ci -> ci : validate diagrams
+    note right : Verifica sintaxis\ny detecta errores
+    
+    ci -> docs : update documentation
+    note right : Regenera GitBook,\nMkDocs o similar
+    
+    ci -> artifacts : store versions
+    note right : Backup de versiones\nprevias para rollback
+    
+    ci -> notify : send notification
+    note right : Notifica cambios\na equipos interesados
+    
+else Sin cambios en diagramas
+    ci -> ci : skip diagram generation
+end
+
+ci -> git : update status
+deactivate ci
+
+== Proceso de Revisión ==
+
+dev -> docs : preview changes
+note right : Documentación actualizada\nautomáticamente disponible
+
+alt Aprobación requerida
+    dev -> git : create pull request
+    git -> ci : trigger review pipeline
+    ci -> ci : generate diagram diff
+    note right : Compara versión anterior\ncon nueva versión
+    
+    ci -> git : post review comments
+    note right : Muestra diferencias\nvisuales en PR
+end
+
+== Despliegue a Producción ==
+
+git -> ci : merge to main
+ci -> docs : deploy to production
+ci -> notify : deployment notification
+
+note over dev, notify
+    Beneficios de la automatización:
+    • Documentación siempre actualizada
+    • Validación automática de sintaxis  
+    • Historial completo de cambios
+    • Notificaciones proactivas
+    • Rollback automático en caso de errores
+end note
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('tips-automation-code', 'tips-automation-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="tips-automation-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>📊 Análisis y Métricas</h3>
+
+                    <div class="tip">
+                        <strong>📈 KPIs para Documentación Técnica:</strong><br>
+                        • <strong>Coverage:</strong> Porcentaje de código documentado<br>
+                        • <strong>Freshness:</strong> Tiempo desde última actualización<br>
+                        • <strong>Usage:</strong> Frecuencia de acceso a diagramas<br>
+                        • <strong>Quality:</strong> Feedback de desarrolladores<br>
+                        • <strong>Maintenance:</strong> Tiempo de actualización
+                    </div>
+
+                    <h3>🛠️ Herramientas y Plugins Útiles</h3>
+
+                    <div class="info">
+                        <strong>🔌 Ecosistema de Herramientas:</strong><br>
+                        <br>
+                        <strong>Editores:</strong><br>
+                        • VS Code: PlantUML, PlantUML Previewer<br>
+                        • Atom: plantuml-viewer, language-plantuml<br>
+                        • Sublime Text: PlantUMLPreview<br>
+                        • Vim: plantuml-syntax, plantuml-previewer<br>
+                        <br>
+                        <strong>Integración Web:</strong><br>
+                        • Confluence: PlantUML Plugin<br>
+                        • Notion: PlantUML embeds<br>
+                        • GitLab: native PlantUML support<br>
+                        • GitHub: PlantUML proxy servers<br>
+                        <br>
+                        <strong>Generadores:</strong><br>
+                        • IntelliJ: PlantUML Generator<br>
+                        • Eclipse: PlantUML Eclipse Plugin<br>
+                        • Maven: plantuml-maven-plugin<br>
+                        • Gradle: gradle-plantuml-plugin
+                    </div>
+
+                    <h3>🎨 Galería de Patrones Avanzados</h3>
+
+                    <div class="example">
+                        <h4>Ejemplo 5: Patrones Visuales Profesionales</h4>
+                        <textarea id="tips-patterns-code">@startuml
+!theme carbon-gray
+
+' Patrón: Separación por capas con colores
+!define PRESENTATION_COLOR #FF6B6B
+!define BUSINESS_COLOR #4ECDC4  
+!define DATA_COLOR #45B7D1
+!define EXTERNAL_COLOR #96CEB4
+
+skinparam rectangle<<presentation>> {
+    BackgroundColor PRESENTATION_COLOR
+    FontColor white
+}
+
+skinparam rectangle<<business>> {
+    BackgroundColor BUSINESS_COLOR
+    FontColor white
+}
+
+skinparam rectangle<<data>> {
+    BackgroundColor DATA_COLOR
+    FontColor white
+}
+
+skinparam cloud<<external>> {
+    BackgroundColor EXTERNAL_COLOR
+    FontColor white
+}
+
+title Arquitectura por Capas - Patrón Visual Profesional
+
+package "Capa de Presentación" #PRESENTATION_COLOR {
+    rectangle "React SPA\n[TypeScript]" <<presentation>> as spa
+    rectangle "Admin Panel\n[Angular]" <<presentation>> as admin
+    rectangle "Mobile App\n[React Native]" <<presentation>> as mobile
+    rectangle "Desktop App\n[Electron]" <<presentation>> as desktop
+}
+
+package "Capa de Negocio" #BUSINESS_COLOR {
+    rectangle "API Gateway\n[Kong]" <<business>> as gateway
+    rectangle "Auth Service\n[OAuth 2.0]" <<business>> as auth
+    rectangle "Business Logic\n[Domain Services]" <<business>> as business
+    rectangle "Workflow Engine\n[Zeebe]" <<business>> as workflow
+}
+
+package "Capa de Datos" #DATA_COLOR {
+    rectangle "Repository Layer\n[JPA/Hibernate]" <<data>> as repo
+    rectangle "Cache Manager\n[Redis]" <<data>> as cache
+    rectangle "Event Store\n[EventSourcing]" <<data>> as events
+    rectangle "File Storage\n[MinIO]" <<data>> as storage
+}
+
+package "Servicios Externos" #EXTERNAL_COLOR {
+    cloud "Payment Gateway\n[Stripe]" <<external>> as payments
+    cloud "Email Service\n[SendGrid]" <<external>> as email
+    cloud "SMS Service\n[Twilio]" <<external>> as sms
+    cloud "Analytics\n[Google Analytics]" <<external>> as analytics
+}
+
+' Conexiones con patrones visuales
+spa -[#PRESENTATION_COLOR]down-> gateway : HTTPS/REST
+admin -[#PRESENTATION_COLOR]down-> gateway : GraphQL
+mobile -[#PRESENTATION_COLOR]down-> gateway : HTTP/2
+desktop -[#PRESENTATION_COLOR]down-> gateway : gRPC
+
+gateway -[#BUSINESS_COLOR]down-> auth : JWT Validation
+gateway -[#BUSINESS_COLOR]down-> business : Service Calls  
+business -[#BUSINESS_COLOR]right-> workflow : Process Execution
+
+business -[#DATA_COLOR]down-> repo : Data Access
+business -[#DATA_COLOR]down-> cache : Caching Strategy
+repo -[#DATA_COLOR]right-> events : Event Publishing
+business -[#DATA_COLOR]down-> storage : File Operations
+
+business -[#EXTERNAL_COLOR]up-> payments : Payment Processing
+business -[#EXTERNAL_COLOR]up-> email : Notifications
+business -[#EXTERNAL_COLOR]up-> sms : OTP/Alerts
+spa -[#EXTERNAL_COLOR]up-> analytics : User Tracking
+
+' Patrones de anotación profesional
+note right of gateway
+    <&shield-alt> Security Layer
+    • Rate Limiting: 100 req/min
+    • API Versioning: v1, v2
+    • CORS Configuration
+    • Request/Response Transformation
+end note
+
+note bottom of business
+    <&cog> Business Rules Engine
+    • Domain Events Publishing
+    • Complex Business Validations
+    • Audit Trail Logging
+    • Performance Monitoring
+end note
+
+note left of repo
+    <&database> Data Consistency
+    • ACID Transactions
+    • Connection Pooling
+    • Query Optimization
+    • Data Validation
+end note
+
+legend top left
+    <&layers> Architectural Layers
+    |<back:PRESENTATION_COLOR>        </back>| Presentation Layer |
+    |<back:BUSINESS_COLOR>        </back>| Business Logic Layer |
+    |<back:DATA_COLOR>        </back>| Data Access Layer |  
+    |<back:EXTERNAL_COLOR>        </back>| External Integration |
+end legend
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('tips-patterns-code', 'tips-patterns-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="tips-patterns-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>🚨 Solución de Problemas Comunes</h3>
+
+                    <div class="warning">
+                        <strong>❌ Problemas Frecuentes y Soluciones:</strong><br>
+                        <br>
+                        <strong>1. Diagramas demasiado complejos:</strong><br>
+                        • Solución: Dividir en múltiples diagramas por contexto<br>
+                        • Usar abstracciones apropiadas para cada audiencia<br>
+                        <br>
+                        <strong>2. Texto ilegible en elementos pequeños:</strong><br>
+                        • Solución: Ajustar skinparam FontSize y usar abreviaciones<br>
+                        • Optimizar para formato de salida (web vs impresión)<br>
+                        <br>
+                        <strong>3. Elementos superpuestos o mal posicionados:</strong><br>
+                        • Solución: Usar direction explícitas y hidden lines<br>
+                        • Definir layout con -up-, -down-, -left-, -right-<br>
+                        <br>
+                        <strong>4. Renderizado lento de diagramas grandes:</strong><br>
+                        • Solución: Reducir elementos decorativos (shadowing, gradients)<br>
+                        • Usar !include para reutilizar definiciones<br>
+                        • Implementar lazy loading en aplicaciones web<br>
+                        <br>
+                        <strong>5. Inconsistencia visual entre diagramas:</strong><br>
+                        • Solución: Crear theme personalizado con skinparam globales<br>
+                        • Usar bibliotecas de estilos compartidos<br>
+                        • Establecer guías de estilo para el equipo
+                    </div>
+
+                    <h3>📚 Recursos Adicionales</h3>
+
+                    <div class="info">
+                        <strong>🌐 Comunidad y Recursos:</strong><br>
+                        <br>
+                        <strong>Documentación Oficial:</strong><br>
+                        • <a href="https://plantuml.com" target="_blank">plantuml.com</a> - Documentación completa<br>
+                        • <a href="http://www.plantuml.com/plantuml/uml/" target="_blank">Editor Online</a> - Pruebas rápidas<br>
+                        • <a href="https://github.com/plantuml" target="_blank">GitHub PlantUML</a> - Código fuente y issues<br>
+                        <br>
+                        <strong>Bibliotecas y Extensiones:</strong><br>
+                        • <a href="https://github.com/plantuml-stdlib/C4-PlantUML" target="_blank">C4 Model</a> - Diagramas de arquitectura<br>
+                        • <a href="https://github.com/awslabs/aws-icons-for-plantuml" target="_blank">AWS Icons</a> - Iconos oficiales de AWS<br>
+                        • <a href="https://github.com/Azure/Azure-PlantUML" target="_blank">Azure PlantUML</a> - Recursos de Microsoft Azure<br>
+                        • <a href="https://github.com/plantuml-stdlib/gilbarbara-plantuml-sprites" target="_blank">Tech Sprites</a> - Iconos de tecnologías<br>
+                        <br>
+                        <strong>Herramientas Complementarias:</strong><br>
+                        • <a href="https://mermaid-js.github.io/" target="_blank">Mermaid</a> - Alternativa para diagramas simples<br>
+                        • <a href="https://www.draw.io/" target="_blank">Draw.io</a> - Editor gráfico complementario<br>
+                        • <a href="https://structurizr.com/" target="_blank">Structurizr</a> - Arquitectura como código<br>
+                        • <a href="https://c4model.com/" target="_blank">C4 Model</a> - Metodología de documentación
+                    </div>
+
+                    <h3>🎓 Siguientes Pasos</h3>
+
+                    <div class="tip">
+                        <strong>🚀 Plan de Aprendizaje Avanzado:</strong><br>
+                        <br>
+                        <strong>Nivel Intermedio:</strong><br>
+                        1. Dominar todos los tipos de diagramas UML<br>
+                        2. Crear biblioteca personal de macros y estilos<br>
+                        3. Implementar automatización básica con CI/CD<br>
+                        4. Integrar PlantUML en flujo de desarrollo diario<br>
+                        <br>
+                        <strong>Nivel Avanzado:</strong><br>
+                        1. Desarrollar extensiones personalizadas<br>
+                        2. Contribuir a proyectos open source PlantUML<br>
+                        3. Crear herramientas de análisis de diagramas<br>
+                        4. Liderar iniciativas de documentación en equipos<br>
+                        <br>
+                        <strong>Nivel Expert:</strong><br>
+                        1. Diseñar DSLs específicos para tu dominio<br>
+                        2. Implementar generación automática desde código<br>
+                        3. Crear plataformas de documentación corporativa<br>
+                        4. Formar y mentorear a otros desarrolladores
+                    </div>
+
+                    <h3>💡 Ejercicio Final - Proyecto Completo</h3>
+
+                    <div class="example">
+                        <h4>Reto: Sistema de Gestión Hospitalaria</h4>
+                        <p>Aplica todo lo aprendido creando documentación completa para un sistema hospitalario:</p>
+                        
+                        <ul>
+                            <li><strong>Contexto:</strong> Diagrama de casos de uso general</li>
+                            <li><strong>Procesos:</strong> Diagramas de actividad para admisión de pacientes</li>
+                            <li><strong>Interacciones:</strong> Secuencias de cita médica y emergencias</li>
+                            <li><strong>Estructura:</strong> Clases del modelo de dominio médico</li>
+                            <li><strong>Estados:</strong> Ciclo de vida de una cita médica</li>
+                            <li><strong>Arquitectura:</strong> Componentes del sistema distribuido</li>
+                        </ul>
+                        
+                        <textarea id="tips-final-exercise-code">@startuml
+' Comienza aquí tu proyecto completo
+' Usa los conocimientos de todas las secciones anteriores
+
+@startuml
+title Sistema de Gestión Hospitalaria - Vista General
+' Agrega casos de uso principales aqui
+
+actor Paciente
+actor "Médico" as Doctor
+actor "Enfermera" as Nurse
+actor "Administrador" as Admin
+
+rectangle "Sistema Hospitalario" {
+    usecase "Registrar Paciente" as UC1
+    usecase "Agendar Cita" as UC2
+    usecase "Consulta Médica" as UC3
+    ' Agrega más casos de uso...
+}
+
+Paciente --> UC1
+Paciente --> UC2
+Doctor --> UC3
+
+' Desarrolla:
+' 1. Casos de uso completos con extend/include
+' 2. Diagramas de clases del modelo médico  
+' 3. Secuencias de procesos críticos
+' 4. Estados de expedientes y citas
+' 5. Actividades de procesos de negocio
+' 6. Arquitectura técnica del sistema
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('tips-final-exercise-code', 'tips-final-exercise-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="tips-final-exercise-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info">
+                        <strong>🎯 ¡Felicitaciones!</strong><br>
+                        Has completado el tutorial avanzado de PlantUML. Ahora tienes las herramientas y conocimientos para:<br>
+                        • Crear diagramas UML profesionales y consistentes<br>
+                        • Integrar PlantUML en flujos de trabajo modernos<br>
+                        • Automatizar la generación y actualización de documentación<br>
+                        • Aplicar mejores prácticas en proyectos reales<br>
+                        • Contribuir a la cultura de documentación en tu organización
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer style="background: #f8f9fa; padding: 20px; text-align: center; margin-top: 40px; border-top: 1px solid #e0e0e0;">
+        <p style="color: #666; margin: 0;">
+            © 2025 Tutorial PlantUML | 
+            <a href="https://plantuml.com" target="_blank" style="color: #667eea;">Documentación Oficial</a> | 
+            <a href="https://github.com" target="_blank" style="color: #667eea;">GitHub</a>
+        </p>
+        <p style="color: #888; font-size: 0.9em; margin: 10px 0 0 0;">
+            Creado para la comunidad de desarrolladores
+        </p>
+    </footer>
+
+    <script src="../js/main.js"></script>
+</body>
+</html>

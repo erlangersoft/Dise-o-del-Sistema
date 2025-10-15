@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagramas de Actividad - Tutorial PlantUML</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="../node_modules/plantuml-encoder/dist/plantuml-encoder.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎨 Tutorial Interactivo de PlantUML</h1>
+            <p>Aprende a crear diagramas UML con código de texto simple</p>
+        </header>
+
+        <div class="content">
+            <div class="sidebar">
+                <a href="../index.html" class="nav-button">Introducción</a>
+                <a href="sequence.html" class="nav-button">Diagramas de Secuencia</a>
+                <a href="class.html" class="nav-button">Diagramas de Clases</a>
+                <a href="usecase.html" class="nav-button">Casos de Uso</a>
+                <a href="activity.html" class="nav-button active">Diagramas de Actividad</a>
+                <a href="state.html" class="nav-button">Diagramas de Estado</a>
+                <a href="component.html" class="nav-button">Componentes</a>
+                <a href="tips.html" class="nav-button">Tips y Trucos</a>
+            </div>
+
+            <div class="main">
+                <div class="breadcrumb">
+                    <a href="../index.html">Inicio</a>
+                    <span>></span>
+                    <span>Diagramas de Actividad</span>
+                </div>
+                
+                <div class="section active">
+                    <h2>Diagramas de Actividad</h2>
+                    <p>Los diagramas de actividad muestran el flujo de trabajo o proceso de un sistema, representando la secuencia de actividades, decisiones, paralelismo y sincronización en un proceso de negocio o algoritmo.</p>
+
+                    <div class="info">
+                        <strong>🎯 Objetivo de aprendizaje:</strong><br>
+                        Al completar esta sección, podrás modelar procesos complejos con decisiones, paralelismo, bucles y manejo de excepciones usando diagramas de actividad.
+                    </div>
+
+                    <h3>Elementos Básicos</h3>
+                    <ul>
+                        <li><code>start</code> : Punto de inicio del diagrama</li>
+                        <li><code>stop</code> : Punto final del diagrama</li>
+                        <li><code>:actividad;</code> : Una actividad o acción</li>
+                        <li><code>if/then/else/endif</code> : Decisión condicional</li>
+                        <li><code>while/endwhile</code> : Bucle con condición</li>
+                        <li><code>repeat/repeat while</code> : Bucle do-while</li>
+                        <li><code>fork/fork again/end fork</code> : Paralelismo</li>
+                    </ul>
+
+                    <div class="example">
+                        <h4>Ejemplo 1: Proceso Simple de Login</h4>
+                        <textarea id="activity-basic-code">@startuml
+start
+:Usuario ingresa credenciales;
+:Validar formato de email;
+
+if (¿Email válido?) then (sí)
+    :Verificar en base de datos;
+    if (¿Credenciales correctas?) then (sí)
+        :Crear sesión de usuario;
+        :Redirigir a dashboard;
+        stop
+    else (no)
+        :Incrementar contador de intentos;
+        if (¿Más de 3 intentos?) then (sí)
+            :Bloquear cuenta temporalmente;
+            :Enviar email de notificación;
+            stop
+        else (no)
+            :Mostrar mensaje de error;
+            :Regresar al formulario;
+            stop
+        endif
+    endif
+else (no)
+    :Mostrar error de formato;
+    :Regresar al formulario;
+    stop
+endif
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('activity-basic-code', 'activity-basic-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="activity-basic-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Paralelismo y Sincronización</h3>
+                    <p>Los diagramas de actividad pueden modelar procesos que ocurren en paralelo y se sincronizan en puntos específicos.</p>
+
+                    <div class="example">
+                        <h4>Ejemplo 2: Procesamiento de Pedido con Paralelismo</h4>
+                        <textarea id="activity-parallel-code">@startuml
+start
+:Recibir pedido del cliente;
+:Validar datos del pedido;
+
+if (¿Pedido válido?) then (sí)
+    :Generar número de orden;
+    
+    fork
+        :Verificar inventario;
+        if (¿Stock disponible?) then (sí)
+            :Reservar productos;
+        else (no)
+            :Solicitar reabastecimiento;
+            :Esperar confirmación;
+            stop
+        endif
+    fork again
+        :Validar información de pago;
+        if (¿Tarjeta válida?) then (sí)
+            :Procesar cargo;
+            if (¿Pago aprobado?) then (sí)
+                :Confirmar transacción;
+            else (no)
+                :Registrar pago fallido;
+                stop
+            endif
+        else (no)
+            :Solicitar método de pago alternativo;
+            stop
+        endif
+    fork again
+        :Calcular costos de envío;
+        :Seleccionar transportista;
+        :Programar fecha de entrega;
+    end fork
+    
+    :Consolidar información del pedido;
+    :Generar factura;
+    
+    fork
+        :Enviar confirmación por email;
+    fork again
+        :Actualizar sistema de inventario;
+    fork again
+        :Notificar al almacén;
+    end fork
+    
+    :Iniciar proceso de preparación;
+    stop
+else (no)
+    :Enviar mensaje de error al cliente;
+    stop
+endif
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('activity-parallel-code', 'activity-parallel-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="activity-parallel-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Bucles y Repeticiones</h3>
+                    <p>Los diagramas pueden incluir diferentes tipos de bucles para representar procesos repetitivos.</p>
+
+                    <div class="example">
+                        <h4>Ejemplo 3: Procesamiento de Archivo con Bucles</h4>
+                        <textarea id="activity-loops-code">@startuml
+start
+:Recibir archivo para procesar;
+:Validar formato del archivo;
+
+if (¿Formato correcto?) then (no)
+    :Registrar error de formato;
+    stop
+else (sí)
+    :Abrir archivo;
+    :Inicializar contador de líneas;
+    
+    while (¿Hay más líneas por procesar?) is (sí)
+        :Leer siguiente línea;
+        :Incrementar contador;
+        
+        if (¿Línea válida?) then (sí)
+            :Procesar datos de la línea;
+            
+            repeat
+                :Intentar guardar en base de datos;
+                if (¿Error de conexión?) then (sí)
+                    :Esperar 2 segundos;
+                else (no)
+                    break
+                endif
+            repeat while (¿Reintentos < 3?) is (sí)
+            -> no;
+            :Registrar error crítico;
+            stop
+            
+        else (no)
+            :Registrar línea con error;
+            note right: Continúa procesando\nlas siguientes líneas
+        endif
+    endwhile (no)
+    
+    :Cerrar archivo;
+    :Generar reporte de procesamiento;
+    
+    if (¿Errores encontrados?) then (sí)
+        :Enviar reporte con errores;
+    else (no)
+        :Confirmar procesamiento exitoso;
+    endif
+    
+    stop
+endif
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('activity-loops-code', 'activity-loops-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="activity-loops-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Particiones y Responsabilidades</h3>
+                    <p>Usa particiones para mostrar qué actor o sistema es responsable de cada actividad.</p>
+
+                    <div class="example">
+                        <h4>Ejemplo 4: Proceso de Contratación con Particiones</h4>
+                        <textarea id="activity-partitions-code">@startuml
+|#LightBlue|Candidato|
+start
+:Enviar CV;
+:Completar formulario online;
+
+|#LightGreen|Recursos Humanos|
+:Revisar documentación;
+if (¿Cumple requisitos básicos?) then (no)
+    :Enviar email de rechazo;
+    |Candidato|
+    :Recibir notificación;
+    stop
+else (sí)
+    :Programar entrevista inicial;
+    :Enviar invitación;
+    
+    |Candidato|
+    :Confirmar asistencia;
+    :Asistir a entrevista;
+    
+    |Recursos Humanos|
+    :Realizar entrevista inicial;
+    :Evaluar candidato;
+    
+    if (¿Pasa primera entrevista?) then (no)
+        :Registrar feedback;
+        :Enviar email de rechazo;
+        |Candidato|
+        stop
+    else (sí)
+        |#LightCoral|Jefe del Departamento|
+        :Recibir perfil del candidato;
+        :Programar entrevista técnica;
+        
+        |Candidato|
+        :Asistir a entrevista técnica;
+        
+        |Jefe del Departamento|
+        :Evaluar habilidades técnicas;
+        
+        if (¿Aprueba evaluación técnica?) then (sí)
+            |#LightYellow|Director General|
+            :Revisar propuesta de contratación;
+            :Aprobar presupuesto;
+            
+            |Recursos Humanos|
+            :Preparar oferta de trabajo;
+            :Enviar oferta al candidato;
+            
+            |Candidato|
+            :Revisar oferta;
+            
+            if (¿Acepta oferta?) then (sí)
+                :Firmar contrato;
+                
+                |Recursos Humanos|
+                :Procesar documentación;
+                :Programar inducción;
+                :Crear perfil en sistema;
+                
+                fork
+                    :Solicitar equipo de trabajo;
+                fork again
+                    :Crear cuentas de acceso;
+                fork again
+                    :Programar capacitación inicial;
+                end fork
+                
+                stop
+            else (no)
+                :Registrar rechazo de oferta;
+                stop
+            endif
+        else (no)
+            :Registrar resultado de evaluación;
+            |Candidato|
+            stop
+        endif
+    endif
+endif
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('activity-partitions-code', 'activity-partitions-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="activity-partitions-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Manejo de Excepciones</h3>
+
+                    <div class="example">
+                        <h4>Ejemplo 5: Backup de Sistema con Manejo de Errores</h4>
+                        <textarea id="activity-exceptions-code">@startuml
+start
+:Iniciar proceso de backup;
+:Verificar espacio en disco;
+
+if (¿Espacio suficiente?) then (no)
+    :Limpiar archivos temporales;
+    if (¿Espacio disponible ahora?) then (no)
+        :Enviar alerta crítica;
+        :Cancelar backup;
+        stop
+    endif
+endif
+
+:Crear directorio de backup;
+:Listar archivos a respaldar;
+
+while (¿Hay archivos pendientes?) is (sí)
+    :Seleccionar siguiente archivo;
+    
+    try {
+        :Copiar archivo;
+        :Verificar integridad;
+    } catch (Error de lectura) {
+        :Registrar archivo corrupto;
+        :Continuar con siguiente archivo;
+    } catch (Error de escritura) {
+        :Verificar espacio en disco;
+        if (¿Sin espacio?) then (sí)
+            :Limpiar backups antiguos;
+            :Reintentar copia;
+        else (no)
+            :Registrar error de E/O;
+            :Marcar backup como parcial;
+        endif
+    } catch (Error de red) {
+        repeat
+            :Esperar reconexión;
+            :Reintentar operación;
+        repeat while (¿Falla conexión?) is (sí)
+        -> no;
+    }
+endwhile (no)
+
+:Comprimir archivos de backup;
+:Calcular checksum del backup;
+:Guardar metadatos;
+
+fork
+    :Enviar backup a almacenamiento remoto;
+fork again
+    :Actualizar log de backups;
+fork again
+    :Limpiar archivos temporales;
+end fork
+
+:Generar reporte de backup;
+
+if (¿Backup completado exitosamente?) then (sí)
+    :Enviar notificación de éxito;
+else (no)
+    :Enviar notificación de backup parcial;
+endif
+
+stop
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('activity-exceptions-code', 'activity-exceptions-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="activity-exceptions-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Ejercicios Prácticos</h3>
+
+                    <div class="example">
+                        <h4>Ejercicio 1: Proceso de Aprobación de Préstamo</h4>
+                        <p>Completa este diagrama para un proceso bancario de aprobación de préstamos que incluya:</p>
+                        <ul>
+                            <li>Verificación de documentos</li>
+                            <li>Evaluación crediticia</li>
+                            <li>Aprobaciones múltiples según el monto</li>
+                            <li>Manejo de rechazos y apelaciones</li>
+                        </ul>
+                        <textarea id="activity-exercise-code">@startuml
+|Cliente|
+start
+:Solicitar préstamo;
+:Completar formulario;
+:Entregar documentos;
+
+|#LightBlue|Oficial de Crédito|
+:Revisar solicitud;
+' Completa el proceso de evaluación
+
+if (¿Documentos completos?) then (sí)
+    ' Agrega el flujo de evaluación crediticia
+    ' Incluye decisiones basadas en el monto
+    ' Maneja diferentes niveles de aprobación
+else (no)
+    ' Maneja documentos faltantes
+endif
+
+' Agrega más actores si es necesario
+' Considera paralelismo donde sea apropiado
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('activity-exercise-code', 'activity-exercise-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="activity-exercise-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Consejos y Mejores Prácticas</h3>
+                    <div class="tip">
+                        <strong>💡 Tips para Diagramas de Actividad:</strong><br>
+                        • Usa nombres de actividades claros y en infinitivo<br>
+                        • Modela el flujo desde la perspectiva del proceso<br>
+                        • Usa particiones para mostrar responsabilidades<br>
+                        • Evita demasiados niveles de anidación<br>
+                        • Incluye manejo de errores para procesos críticos
+                    </div>
+
+                    <h3>Tipos de Elementos Avanzados</h3>
+                    <ul>
+                        <li><code>floating</code> : Actividades sin conexión específica</li>
+                        <li><code>detach</code> : Termina un hilo de ejecución</li>
+                        <li><code>kill</code> : Termina todos los hilos</li>
+                        <li><code>backward</code> : Flecha hacia atrás</li>
+                        <li><code>note</code> : Agregar anotaciones explicativas</li>
+                    </ul>
+
+                    <h3>Comandos Útiles Específicos</h3>
+                    <ul>
+                        <li><code>skinparam activity</code> : Personaliza colores de actividades</li>
+                        <li><code>!theme</code> : Aplica temas predefinidos</li>
+                        <li><code>title/header/footer</code> : Agrega información del diagrama</li>
+                        <li><code>legend</code> : Incluye leyenda explicativa</li>
+                        <li><code>scale</code> : Ajusta el tamaño del diagrama</li>
+                    </ul>
+
+                    <div class="warning">
+                        <strong>⚠️ Errores Comunes:</strong><br>
+                        • Mezclar niveles de abstracción en el mismo diagrama<br>
+                        • No usar particiones cuando hay múltiples actores<br>
+                        • Olvidar puntos de sincronización después de fork<br>
+                        • Crear diagramas demasiado complejos para una sola vista<br>
+                        • No manejar casos excepcionales importantes
+                    </div>
+
+                    <div class="info">
+                        <strong>🎯 Casos de Uso Ideales:</strong><br>
+                        • <strong>Procesos de negocio:</strong> Workflows organizacionales<br>
+                        • <strong>Algoritmos:</strong> Lógica de programación compleja<br>
+                        • <strong>Casos de uso:</strong> Detallar el comportamiento interno<br>
+                        • <strong>Procesos de sistema:</strong> Flujos automatizados<br>
+                        • <strong>Procedimientos:</strong> Instructivos paso a paso
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer style="background: #f8f9fa; padding: 20px; text-align: center; margin-top: 40px; border-top: 1px solid #e0e0e0;">
+        <p style="color: #666; margin: 0;">
+            © 2025 Tutorial PlantUML | 
+            <a href="https://plantuml.com" target="_blank" style="color: #667eea;">Documentación Oficial</a> | 
+            <a href="https://github.com" target="_blank" style="color: #667eea;">GitHub</a>
+        </p>
+        <p style="color: #888; font-size: 0.9em; margin: 10px 0 0 0;">
+            Creado para la comunidad de desarrolladores
+        </p>
+    </footer>
+
+    <script src="../js/main.js"></script>
+</body>
+</html>

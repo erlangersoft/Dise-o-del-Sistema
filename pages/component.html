@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagramas de Componentes - Tutorial PlantUML</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="../node_modules/plantuml-encoder/dist/plantuml-encoder.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎨 Tutorial Interactivo de PlantUML</h1>
+            <p>Aprende a crear diagramas UML con código de texto simple</p>
+        </header>
+
+        <div class="content">
+            <div class="sidebar">
+                <a href="../index.html" class="nav-button">Introducción</a>
+                <a href="sequence.html" class="nav-button">Diagramas de Secuencia</a>
+                <a href="class.html" class="nav-button">Diagramas de Clases</a>
+                <a href="usecase.html" class="nav-button">Casos de Uso</a>
+                <a href="activity.html" class="nav-button">Diagramas de Actividad</a>
+                <a href="state.html" class="nav-button">Diagramas de Estado</a>
+                <a href="component.html" class="nav-button active">Componentes</a>
+                <a href="tips.html" class="nav-button">Tips y Trucos</a>
+            </div>
+
+            <div class="main">
+                <div class="breadcrumb">
+                    <a href="../index.html">Inicio</a>
+                    <span>></span>
+                    <span>Diagramas de Componentes</span>
+                </div>
+                
+                <div class="section active">
+                    <h2>Diagramas de Componentes</h2>
+                    <p>Los diagramas de componentes muestran la organización y dependencias entre componentes de software, describiendo la arquitectura física del sistema y cómo los módulos interactúan entre sí.</p>
+
+                    <div class="info">
+                        <strong>🎯 Objetivo de aprendizaje:</strong><br>
+                        Al completar esta sección, podrás diseñar arquitecturas de software completas, desde microservicios hasta sistemas monolíticos, mostrando interfaces, dependencias y despliegue.
+                    </div>
+
+                    <h3>Elementos Básicos</h3>
+                    <ul>
+                        <li><code>[Componente]</code> : Componente básico</li>
+                        <li><code>package</code> : Agrupación de componentes</li>
+                        <li><code>interface</code> : Interfaz de servicio</li>
+                        <li><code>database</code> : Base de datos</li>
+                        <li><code>cloud</code> : Servicios en la nube</li>
+                        <li><code>node</code> : Nodo de hardware</li>
+                        <li><code>--></code> : Dependencia/conexión</li>
+                        <li><code>..></code> : Dependencia opcional</li>
+                    </ul>
+
+                    <div class="example">
+                        <h4>Ejemplo 1: Aplicación Web Básica</h4>
+                        <textarea id="component-basic-code">@startuml
+package "Frontend" {
+    [App Web React] as Web
+    [App Mobile Flutter] as Mobile
+}
+
+package "Backend" {
+    [API REST] as API
+    [Servicio de Autenticación] as Auth
+    [Servicio de Notificaciones] as Notifications
+}
+
+package "Persistencia" {
+    database "PostgreSQL" as DB
+    database "Redis Cache" as Cache
+}
+
+package "Servicios Externos" {
+    cloud "AWS S3" as Storage
+    cloud "SendGrid" as Email
+    cloud "Stripe" as Payment
+}
+
+' Conexiones Frontend -> Backend
+Web --> API : HTTP/HTTPS
+Mobile --> API : HTTP/HTTPS
+
+' Conexiones internas del Backend  
+API --> Auth : valida tokens
+API --> DB : consultas SQL
+API --> Cache : datos temporales
+Auth --> DB : usuarios y permisos
+Notifications --> Email : envío de emails
+
+' Dependencias opcionales
+API ..> Storage : subida de archivos
+API ..> Payment : procesamiento de pagos
+Notifications ..> Mobile : push notifications
+
+note right of API
+    El API actúa como gateway
+    centralizando todas las
+    peticiones del frontend
+end note
+
+note bottom of Cache
+    Redis mejora el rendimiento
+    almacenando consultas
+    frecuentes en memoria
+end note
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('component-basic-code', 'component-basic-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="component-basic-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Arquitectura de Microservicios</h3>
+                    <p>Los microservicios requieren diagramas más complejos que muestren la comunicación entre servicios independientes.</p>
+
+                    <div class="example">
+                        <h4>Ejemplo 2: E-commerce con Microservicios</h4>
+                        <textarea id="component-microservices-code">@startuml
+!define RECTANGLE class
+!define DATABASE database
+!define QUEUE component
+
+skinparam component {
+    BackgroundColor LightBlue
+    BorderColor Navy
+}
+
+skinparam database {
+    BackgroundColor LightGreen
+    BorderColor DarkGreen
+}
+
+package "API Gateway Layer" {
+    [Kong Gateway] as Gateway
+    [Rate Limiter] as RateLimit
+    [Authentication Service] as AuthGW
+}
+
+package "Frontend Applications" {
+    [Web Portal] as WebPortal
+    [Admin Dashboard] as AdminDash
+    [Mobile App] as MobileApp
+}
+
+package "Core Microservices" {
+    [User Service] as UserSvc
+    [Product Service] as ProductSvc
+    [Order Service] as OrderSvc
+    [Payment Service] as PaymentSvc
+    [Inventory Service] as InventorySvc
+    [Notification Service] as NotificationSvc
+}
+
+package "Data Layer" {
+    DATABASE "Users DB\n(PostgreSQL)" as UserDB
+    DATABASE "Products DB\n(MongoDB)" as ProductDB
+    DATABASE "Orders DB\n(PostgreSQL)" as OrderDB
+    DATABASE "Inventory DB\n(PostgreSQL)" as InventoryDB
+}
+
+package "Message Queue" {
+    QUEUE "RabbitMQ\nOrder Events" as OrderQueue
+    QUEUE "RabbitMQ\nNotification Queue" as NotifyQueue
+    QUEUE "Apache Kafka\nEvent Stream" as EventStream
+}
+
+package "External Services" {
+    cloud "Stripe API" as StripeAPI
+    cloud "SendGrid API" as SendGridAPI
+    cloud "AWS S3" as S3Storage
+    cloud "ElasticSearch" as SearchEngine
+}
+
+package "Monitoring & Logging" {
+    [Prometheus] as Metrics
+    [Grafana] as Dashboard
+    [ELK Stack] as Logging
+}
+
+' Frontend connections
+WebPortal --> Gateway
+AdminDash --> Gateway  
+MobileApp --> Gateway
+
+' Gateway layer
+Gateway --> RateLimit
+Gateway --> AuthGW
+Gateway --> UserSvc
+Gateway --> ProductSvc
+Gateway --> OrderSvc
+
+' Service to database connections
+UserSvc --> UserDB
+ProductSvc --> ProductDB
+OrderSvc --> OrderDB
+InventorySvc --> InventoryDB
+
+' Inter-service communication
+OrderSvc --> PaymentSvc : HTTP calls
+OrderSvc --> InventorySvc : HTTP calls
+OrderSvc --> OrderQueue : publish events
+PaymentSvc --> StripeAPI
+NotificationSvc --> SendGridAPI
+NotificationSvc --> MobileApp : push notifications
+
+' Event-driven communication
+OrderQueue --> InventorySvc : consume events
+OrderQueue --> NotificationSvc : consume events
+OrderSvc --> EventStream : publish order events
+PaymentSvc --> EventStream : publish payment events
+
+' Search and storage
+ProductSvc --> SearchEngine : index products
+ProductSvc --> S3Storage : store images
+
+' Monitoring
+UserSvc ..> Metrics : metrics
+ProductSvc ..> Metrics : metrics
+OrderSvc ..> Metrics : metrics
+PaymentSvc ..> Metrics : metrics
+Metrics --> Dashboard : visualize
+Gateway ..> Logging : access logs
+
+note right of Gateway
+    Single entry point
+    - Load balancing
+    - SSL termination
+    - Request routing
+    - Security policies
+end note
+
+note bottom of OrderQueue
+    Asynchronous communication
+    ensures loose coupling
+    between microservices
+end note
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('component-microservices-code', 'component-microservices-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="component-microservices-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Diagramas de Despliegue</h3>
+                    <p>Muestra cómo los componentes se distribuyen en diferentes nodos de hardware o contenedores.</p>
+
+                    <div class="example">
+                        <h4>Ejemplo 3: Arquitectura Cloud con Kubernetes</h4>
+                        <textarea id="component-deployment-code">@startuml
+!define NODE node
+
+skinparam node {
+    BackgroundColor LightYellow
+    BorderColor Orange
+}
+
+skinparam component {
+    BackgroundColor LightBlue
+}
+
+NODE "Load Balancer\n(AWS ALB)" as LB {
+    [Application Load Balancer]
+}
+
+NODE "Kubernetes Cluster" as K8s {
+    
+    package "Frontend Namespace" {
+        NODE "Web Pod 1" as WebPod1 {
+            [React App] as React1
+            [Nginx] as Nginx1
+        }
+        
+        NODE "Web Pod 2" as WebPod2 {
+            [React App] as React2
+            [Nginx] as Nginx2
+        }
+    }
+    
+    package "Backend Namespace" {
+        NODE "API Pod 1" as APIPod1 {
+            [Node.js API] as API1
+        }
+        
+        NODE "API Pod 2" as APIPod2 {
+            [Node.js API] as API2
+        }
+        
+        NODE "Auth Pod" as AuthPod {
+            [Auth Service] as AuthSvc
+        }
+        
+        NODE "Worker Pod" as WorkerPod {
+            [Background Jobs] as Worker
+            [Queue Consumer] as Consumer
+        }
+    }
+}
+
+NODE "Database Tier" as DBTier {
+    NODE "Primary DB Server" as DBPrimary {
+        database "PostgreSQL Primary" as DB1
+    }
+    
+    NODE "Read Replica" as DBReplica {
+        database "PostgreSQL Replica" as DB2
+    }
+    
+    NODE "Cache Server" as CacheServer {
+        database "Redis Cluster" as Redis
+    }
+}
+
+NODE "Message Queue Cluster" as MQCluster {
+    NODE "RabbitMQ Node 1" as MQ1 {
+        [RabbitMQ Instance] as Rabbit1
+    }
+    
+    NODE "RabbitMQ Node 2" as MQ2 {
+        [RabbitMQ Instance] as Rabbit2
+    }
+}
+
+NODE "External Services" as External {
+    cloud "AWS S3" as S3
+    cloud "CloudWatch" as Monitoring
+    cloud "Route 53" as DNS
+}
+
+' Load balancer routing
+LB --> WebPod1 : HTTP/HTTPS
+LB --> WebPod2 : HTTP/HTTPS
+
+' Frontend to backend
+React1 --> API1 : REST API
+React2 --> API2 : REST API
+Nginx1 --> API1 : reverse proxy
+Nginx2 --> API2 : reverse proxy
+
+' API connections
+API1 --> AuthSvc : authentication
+API2 --> AuthSvc : authentication
+API1 --> DB1 : read/write
+API2 --> DB1 : read/write
+API1 --> DB2 : read only
+API2 --> DB2 : read only
+API1 --> Redis : caching
+API2 --> Redis : caching
+
+' Background processing
+Worker --> Rabbit1 : consume jobs
+Consumer --> Rabbit2 : consume messages
+API1 --> Rabbit1 : publish jobs
+API2 --> Rabbit2 : publish jobs
+
+' Database replication
+DB1 --> DB2 : replication
+
+' External services
+API1 ..> S3 : file storage
+API2 ..> S3 : file storage
+K8s ..> Monitoring : metrics & logs
+DNS --> LB : DNS resolution
+
+note right of K8s
+    Kubernetes provides:
+    - Auto-scaling
+    - Service discovery  
+    - Health checks
+    - Rolling updates
+end note
+
+note bottom of DBTier
+    Database setup ensures:
+    - High availability
+    - Read scaling
+    - Fast caching
+end note
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('component-deployment-code', 'component-deployment-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="component-deployment-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Arquitectura Serverless</h3>
+
+                    <div class="example">
+                        <h4>Ejemplo 4: Sistema Serverless con AWS</h4>
+                        <textarea id="component-serverless-code">@startuml
+skinparam cloud {
+    BackgroundColor LightCyan
+    BorderColor DarkBlue
+}
+
+skinparam rectangle {
+    BackgroundColor Wheat
+    BorderColor Brown
+}
+
+package "Client Applications" {
+    [Web App] as WebApp
+    [Mobile App] as MobileApp
+    [Admin Portal] as AdminPortal
+}
+
+cloud "AWS API Gateway" as APIGateway {
+    interface "REST API" as RestAPI
+    interface "WebSocket API" as WSapi
+}
+
+cloud "AWS Lambda Functions" {
+    [User Management\nFunction] as UserLambda
+    [Product Catalog\nFunction] as ProductLambda
+    [Order Processing\nFunction] as OrderLambda
+    [Image Resizer\nFunction] as ImageLambda
+    [Email Sender\nFunction] as EmailLambda
+    [WebSocket Handler\nFunction] as WSLambda
+}
+
+cloud "AWS Storage Services" {
+    database "DynamoDB\nUser Data" as UserDB
+    database "DynamoDB\nProducts" as ProductDB
+    database "DynamoDB\nOrders" as OrderDB
+    cloud "S3 Bucket\nImages" as S3Images
+    cloud "S3 Bucket\nStatic Files" as S3Static
+}
+
+cloud "AWS Integration Services" {
+    rectangle "SQS Queue\nOrder Processing" as SQSOrders
+    rectangle "SNS Topic\nNotifications" as SNSTopic
+    rectangle "EventBridge\nEvent Bus" as EventBridge
+    rectangle "Step Functions\nWorkflow" as StepFunc
+}
+
+cloud "AWS Monitoring" {
+    [CloudWatch\nLogs & Metrics] as CloudWatch
+    [X-Ray\nTracing] as XRay
+}
+
+cloud "External APIs" {
+    [Stripe Payment\nAPI] as StripeAPI
+    [SendGrid\nEmail API] as SendGridAPI
+}
+
+' Client connections
+WebApp --> RestAPI : HTTPS
+MobileApp --> RestAPI : HTTPS
+AdminPortal --> WSapi : WebSocket
+WebApp --> S3Static : static assets
+
+' API Gateway to Lambda
+RestAPI --> UserLambda : /users/*
+RestAPI --> ProductLambda : /products/*  
+RestAPI --> OrderLambda : /orders/*
+WSapi --> WSLambda : WebSocket events
+
+' Lambda to Database
+UserLambda --> UserDB : DynamoDB API
+ProductLambda --> ProductDB : DynamoDB API
+OrderLambda --> OrderDB : DynamoDB API
+
+' Asynchronous processing
+OrderLambda --> SQSOrders : send message
+SQSOrders --> EmailLambda : trigger
+OrderLambda --> SNSTopic : publish event
+SNSTopic --> EmailLambda : subscription
+
+' File processing
+S3Images --> ImageLambda : S3 event trigger
+ImageLambda --> S3Images : store resized images
+
+' Complex workflows
+OrderLambda --> StepFunc : start workflow
+StepFunc --> OrderLambda : process payment
+StepFunc --> EmailLambda : send confirmation
+
+' Event-driven architecture
+UserLambda --> EventBridge : user events
+ProductLambda --> EventBridge : product events
+OrderLambda --> EventBridge : order events
+EventBridge --> EmailLambda : filtered events
+
+' External integrations
+OrderLambda --> StripeAPI : payment processing
+EmailLambda --> SendGridAPI : email delivery
+
+' Monitoring and tracing
+UserLambda ..> CloudWatch : logs
+ProductLambda ..> CloudWatch : logs
+OrderLambda ..> CloudWatch : logs
+EmailLambda ..> CloudWatch : logs
+UserLambda ..> XRay : traces
+OrderLambda ..> XRay : traces
+
+note right of APIGateway
+    Serverless API Gateway:
+    - Auto-scaling
+    - Built-in caching
+    - Request validation
+    - Rate limiting
+end note
+
+note bottom of "AWS Lambda Functions"
+    Lambda benefits:
+    - Pay per execution
+    - Auto-scaling
+    - No server management
+    - Event-driven triggers
+end note
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('component-serverless-code', 'component-serverless-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="component-serverless-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Arquitectura de Datos y Analytics</h3>
+
+                    <div class="example">
+                        <h4>Ejemplo 5: Pipeline de Datos Big Data</h4>
+                        <textarea id="component-data-pipeline-code">@startuml
+skinparam component {
+    BackgroundColor LightGreen
+}
+
+skinparam database {
+    BackgroundColor LightBlue
+}
+
+package "Data Sources" {
+    [Web Applications] as WebApps
+    [Mobile Apps] as MobileApps  
+    [IoT Sensors] as IoTSensors
+    [External APIs] as ExternalAPIs
+    database "Legacy Systems\n(RDBMS)" as LegacySystems
+}
+
+package "Data Ingestion Layer" {
+    [Apache Kafka\nStreaming] as Kafka
+    [AWS Kinesis\nData Streams] as Kinesis
+    [Apache Flume\nLog Collection] as Flume
+    [REST API\nGateway] as DataGateway
+}
+
+package "Stream Processing" {
+    [Apache Spark\nStreaming] as SparkStreaming
+    [Apache Storm\nReal-time] as Storm
+    [AWS Lambda\nEvent Processing] as StreamLambda
+}
+
+package "Batch Processing" {
+    [Apache Spark\nBatch Jobs] as SparkBatch
+    [Apache Hadoop\nMapReduce] as Hadoop
+    [AWS Glue\nETL Jobs] as GlueETL
+}
+
+package "Data Storage" {
+    database "HDFS\nRaw Data Lake" as HDFS
+    database "AWS S3\nData Lake" as S3DataLake
+    database "Apache Cassandra\nTime Series" as Cassandra
+    database "Elasticsearch\nSearch & Analytics" as ElasticSearch
+    database "PostgreSQL\nProcessed Data" as PostgresWarehouse
+}
+
+package "Analytics & ML" {
+    [Apache Zeppelin\nNotebooks] as Zeppelin
+    [Jupyter Notebooks\nML Development] as Jupyter
+    [TensorFlow\nML Models] as TensorFlow
+    [Apache Superset\nVisualization] as Superset
+}
+
+package "Data Access Layer" {
+    [GraphQL API\nData Access] as GraphQLAPI
+    [Apache Drill\nSQL Engine] as Drill
+    [Presto\nDistributed SQL] as Presto
+}
+
+package "Presentation Layer" {
+    [Business Dashboard\nTableau] as Tableau
+    [Real-time Dashboard\nGrafana] as Grafana
+    [Mobile Analytics App] as MobileAnalytics
+    [Reporting API] as ReportingAPI
+}
+
+' Data ingestion flow
+WebApps --> DataGateway : HTTP/REST
+MobileApps --> Kinesis : SDK integration
+IoTSensors --> Kafka : MQTT/TCP
+ExternalAPIs --> Flume : HTTP polling
+LegacySystems --> DataGateway : batch upload
+
+' Stream processing
+Kafka --> SparkStreaming : consume streams
+Kinesis --> StreamLambda : trigger processing
+DataGateway --> Storm : real-time events
+
+' Batch processing  
+HDFS --> SparkBatch : daily processing
+S3DataLake --> GlueETL : scheduled jobs
+Kafka --> Hadoop : batch consumption
+
+' Data storage
+SparkStreaming --> Cassandra : time-series data
+SparkStreaming --> ElasticSearch : searchable data
+StreamLambda --> S3DataLake : processed events
+SparkBatch --> PostgresWarehouse : aggregated data
+GlueETL --> S3DataLake : cleansed data
+Hadoop --> HDFS : processed results
+
+' Analytics and ML
+S3DataLake --> Jupyter : ML feature engineering
+PostgresWarehouse --> TensorFlow : training data
+Zeppelin --> HDFS : exploratory analysis
+Jupyter --> S3DataLake : model artifacts
+
+' Data access
+PostgresWarehouse --> GraphQLAPI : structured queries
+S3DataLake --> Drill : ad-hoc SQL queries
+ElasticSearch --> Presto : distributed queries
+
+' Presentation
+GraphQLAPI --> Tableau : business intelligence
+Cassandra --> Grafana : real-time metrics
+Presto --> MobileAnalytics : mobile queries
+Drill --> ReportingAPI : automated reports
+ElasticSearch --> Superset : interactive dashboards
+
+note right of Kafka
+    Kafka acts as the central
+    nervous system collecting
+    all streaming data
+end note
+
+note bottom of "Stream Processing"
+    Real-time processing enables
+    immediate insights and
+    alerting on critical events
+end note
+
+note left of "Data Storage"
+    Multi-modal storage strategy:
+    - Raw data in data lake
+    - Time-series in Cassandra
+    - Search in Elasticsearch
+    - Analytics in data warehouse
+end note
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('component-data-pipeline-code', 'component-data-pipeline-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="component-data-pipeline-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Ejercicios Prácticos</h3>
+
+                    <div class="example">
+                        <h4>Ejercicio 1: Plataforma de Streaming de Video</h4>
+                        <p>Diseña la arquitectura de una plataforma como Netflix que incluya:</p>
+                        <ul>
+                            <li>Frontend para diferentes dispositivos</li>
+                            <li>APIs para contenido y usuarios</li>
+                            <li>Sistema de recomendaciones</li>
+                            <li>CDN para distribución de contenido</li>
+                            <li>Procesamiento de video</li>
+                        </ul>
+                        <textarea id="component-exercise-code">@startuml
+package "Client Applications" {
+    [Web Browser] as Web
+    [Smart TV App] as TV
+    [Mobile App] as Mobile
+    ' Agrega más clientes
+}
+
+package "Content Delivery" {
+    [CDN] as CDN
+    ' Agrega componentes de distribución
+}
+
+package "Backend Services" {
+    [User Service] as UserSvc
+    [Content Service] as ContentSvc
+    ' Agrega más servicios (recomendaciones, búsqueda, etc.)
+}
+
+package "Data Storage" {
+    database "User Database" as UserDB
+    ' Agrega más bases de datos
+}
+
+' Agrega las conexiones entre componentes
+Web --> CDN : stream video
+UserSvc --> UserDB : user data
+
+' Completa la arquitectura con:
+' - Video processing pipeline
+' - Recommendation engine  
+' - Analytics and monitoring
+' - Search functionality
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('component-exercise-code', 'component-exercise-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="component-exercise-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Consejos y Mejores Prácticas</h3>
+                    <div class="tip">
+                        <strong>💡 Tips para Diagramas de Componentes:</strong><br>
+                        • Agrupa componentes relacionados en packages<br>
+                        • Usa colores para diferenciar tipos de componentes<br>
+                        • Muestra interfaces claramente definidas<br>
+                        • Incluye componentes externos y de terceros<br>
+                        • Documenta protocolos de comunicación
+                    </div>
+
+                    <h3>Tipos de Componentes Especializados</h3>
+                    <ul>
+                        <li><code>artifact</code> : Artefactos desplegables (JAR, WAR)</li>
+                        <li><code>folder</code> : Directorios del sistema</li>
+                        <li><code>frame</code> : Marcos o subsistemas</li>
+                        <li><code>rectangle</code> : Componentes genéricos</li>
+                        <li><code>actor</code> : Sistemas externos</li>
+                        <li><code>boundary</code> : Límites del sistema</li>
+                    </ul>
+
+                    <h3>Comandos Útiles Específicos</h3>
+                    <ul>
+                        <li><code>skinparam component</code> : Personaliza apariencia de componentes</li>
+                        <li><code>!define</code> : Crea alias para elementos comunes</li>
+                        <li><code>left to right direction</code> : Cambia orientación</li>
+                        <li><code>hide/show</code> : Controla visibilidad de elementos</li>
+                        <li><code>legend</code> : Agrega leyenda explicativa</li>
+                    </ul>
+
+                    <div class="warning">
+                        <strong>⚠️ Errores Comunes:</strong><br>
+                        • Mezclar niveles de abstracción en el mismo diagrama<br>
+                        • No mostrar interfaces entre componentes<br>
+                        • Olvidar incluir componentes de infraestructura<br>
+                        • Crear diagramas demasiado detallados para el nivel arquitectural<br>
+                        • No documentar protocolos de comunicación
+                    </div>
+
+                    <div class="info">
+                        <strong>🏗️ Tipos de Arquitecturas Comunes:</strong><br>
+                        • <strong>Monolítica:</strong> Aplicación única con módulos internos<br>
+                        • <strong>Microservicios:</strong> Servicios independientes comunicándose via API<br>
+                        • <strong>Serverless:</strong> Funciones como servicio sin servidor<br>
+                        • <strong>Event-driven:</strong> Comunicación asíncrona mediante eventos<br>
+                        • <strong>Layered:</strong> Capas bien definidas (presentación, lógica, datos)
+                    </div>
+
+                    <div class="info">
+                        <strong>📋 Consideraciones de Diseño:</strong><br>
+                        1. <strong>Acoplamiento:</strong> Minimizar dependencias entre componentes<br>
+                        2. <strong>Cohesión:</strong> Agrupar funcionalidad relacionada<br>
+                        3. <strong>Escalabilidad:</strong> Componentes que puedan crecer independientemente<br>
+                        4. <strong>Mantenibilidad:</strong> Fácil modificación y actualización<br>
+                        5. <strong>Seguridad:</strong> Límites de confianza y puntos de control
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer style="background: #f8f9fa; padding: 20px; text-align: center; margin-top: 40px; border-top: 1px solid #e0e0e0;">
+        <p style="color: #666; margin: 0;">
+            © 2025 Tutorial PlantUML | 
+            <a href="https://plantuml.com" target="_blank" style="color: #667eea;">Documentación Oficial</a> | 
+            <a href="https://github.com" target="_blank" style="color: #667eea;">GitHub</a>
+        </p>
+        <p style="color: #888; font-size: 0.9em; margin: 10px 0 0 0;">
+            Creado para la comunidad de desarrolladores
+        </p>
+    </footer>
+
+    <script src="../js/main.js"></script>
+</body>
+</html>

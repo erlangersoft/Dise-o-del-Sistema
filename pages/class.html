@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagramas de Clase - Tutorial PlantUML</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="../node_modules/plantuml-encoder/dist/plantuml-encoder.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎨 Tutorial Interactivo de PlantUML</h1>
+            <p>Aprende a crear diagramas UML con código de texto simple</p>
+        </header>
+
+        <div class="content">
+            <div class="sidebar">
+                <a href="../index.html" class="nav-button">Introducción</a>
+                <a href="sequence.html" class="nav-button">Diagramas de Secuencia</a>
+                <a href="class.html" class="nav-button active">Diagramas de Clases</a>
+                <a href="usecase.html" class="nav-button">Casos de Uso</a>
+                <a href="activity.html" class="nav-button">Diagramas de Actividad</a>
+                <a href="state.html" class="nav-button">Diagramas de Estado</a>
+                <a href="component.html" class="nav-button">Componentes</a>
+                <a href="tips.html" class="nav-button">Tips y Trucos</a>
+            </div>
+
+            <div class="main">
+                <div class="breadcrumb">
+                    <a href="../index.html">Inicio</a>
+                    <span>></span>
+                    <span>Diagramas de Clases</span>
+                </div>
+                
+                <div class="section active">
+                    <h2>Diagramas de Clases</h2>
+                    <p>Los diagramas de clases muestran la estructura estática de un sistema mediante clases, sus atributos, métodos y las relaciones entre ellas. Son fundamentales para el diseño orientado a objetos.</p>
+
+                    <div class="info">
+                        <strong>🎯 Objetivo de aprendizaje:</strong><br>
+                        Al completar esta sección, podrás diseñar sistemas completos usando diagramas de clases, incluyendo herencia, composición y patrones de diseño.
+                    </div>
+
+                    <h3>Sintaxis Básica de Clases</h3>
+                    <ul>
+                        <li><code>class NombreClase</code> : Define una clase</li>
+                        <li><code>-atributo</code> : Atributo privado</li>
+                        <li><code>+método()</code> : Método público</li>
+                        <li><code>#protegido</code> : Atributo/método protegido</li>
+                        <li><code>~paquete</code> : Visibilidad de paquete</li>
+                        <li><code>abstract class</code> : Clase abstracta</li>
+                        <li><code>interface</code> : Interfaz</li>
+                    </ul>
+
+                    <div class="example">
+                        <h4>Ejemplo 1: Clase Básica con Atributos y Métodos</h4>
+                        <textarea id="class-basic-code">@startuml
+class Producto {
+    -id: int
+    -nombre: String
+    -precio: decimal
+    -categoria: String
+    -fechaCreacion: Date
+    --
+    +getId(): int
+    +getNombre(): String
+    +getPrecio(): decimal
+    +setNombre(nombre: String): void
+    +setPrecio(precio: decimal): void
+    +calcularDescuento(porcentaje: float): decimal
+    +esValido(): boolean
+}
+
+note right of Producto
+    Los atributos privados (-)
+    solo son accesibles desde
+    dentro de la clase
+end note
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('class-basic-code', 'class-basic-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="class-basic-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Relaciones Entre Clases</h3>
+                    <ul>
+                        <li><code><|--</code> : Herencia (extends)</li>
+                        <li><code><|..</code> : Implementación (implements)</li>
+                        <li><code>*--</code> : Composición (parte de)</li>
+                        <li><code>o--</code> : Agregación (tiene un)</li>
+                        <li><code>--></code> : Asociación simple</li>
+                        <li><code>..></code> : Dependencia</li>
+                    </ul>
+
+                    <div class="example">
+                        <h4>Ejemplo 2: Sistema de E-commerce con Relaciones</h4>
+                        <textarea id="class-ecommerce-code">@startuml
+class Usuario {
+    -id: int
+    -nombre: String
+    -email: String
+    -password: String
+    -fechaRegistro: Date
+    --
+    +login(email: String, pass: String): boolean
+    +logout(): void
+    +actualizarPerfil(): void
+    +cambiarPassword(newPass: String): void
+}
+
+class Cliente {
+    -direccionEnvio: String
+    -telefono: String
+    -historialCompras: List<Pedido>
+    --
+    +agregarDireccion(direccion: String): void
+    +realizarPedido(carrito: Carrito): Pedido
+    +consultarHistorial(): List<Pedido>
+}
+
+class Administrador {
+    -permisos: List<String>
+    -departamento: String
+    --
+    +gestionarProductos(): void
+    +aprobarPedidos(): void
+    +generarReportes(): void
+}
+
+abstract class Producto {
+    #id: int
+    #nombre: String
+    #precio: decimal
+    #stock: int
+    --
+    +abstract calcularPrecioFinal(): decimal
+    +actualizarStock(cantidad: int): void
+    +estaDisponible(): boolean
+}
+
+class ProductoFisico {
+    -peso: float
+    -dimensiones: String
+    -costoEnvio: decimal
+    --
+    +calcularPrecioFinal(): decimal
+    +calcularCostoEnvio(): decimal
+}
+
+class ProductoDigital {
+    -tamaño: long
+    -formatoArchivo: String
+    -linkDescarga: String
+    --
+    +calcularPrecioFinal(): decimal
+    +generarLinkDescarga(): String
+}
+
+class Carrito {
+    -id: int
+    -fechaCreacion: Date
+    -items: List<ItemCarrito>
+    --
+    +agregarItem(producto: Producto, cantidad: int): void
+    +eliminarItem(itemId: int): void
+    +calcularTotal(): decimal
+    +limpiar(): void
+}
+
+class ItemCarrito {
+    -cantidad: int
+    -precioUnitario: decimal
+    --
+    +calcularSubtotal(): decimal
+}
+
+class Pedido {
+    -numero: String
+    -fecha: Date
+    -estado: EstadoPedido
+    -total: decimal
+    --
+    +procesar(): void
+    +cancelar(): void
+    +actualizarEstado(estado: EstadoPedido): void
+}
+
+enum EstadoPedido {
+    PENDIENTE
+    CONFIRMADO
+    EN_PROCESO
+    ENVIADO
+    ENTREGADO
+    CANCELADO
+}
+
+' Relaciones de herencia
+Usuario <|-- Cliente
+Usuario <|-- Administrador
+Producto <|-- ProductoFisico
+Producto <|-- ProductoDigital
+
+' Relaciones de composición
+Cliente *-- Carrito : posee >
+Carrito *-- ItemCarrito : contiene >
+Cliente "1" --> "*" Pedido : realiza >
+
+' Relaciones de asociación
+ItemCarrito --> Producto : referencia >
+Pedido --> EstadoPedido : tiene >
+
+' Agregación
+Carrito o-- Producto : incluye >
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('class-ecommerce-code', 'class-ecommerce-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="class-ecommerce-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Patrones de Diseño</h3>
+                    <p>Los diagramas de clases son ideales para representar patrones de diseño. Veamos algunos ejemplos prácticos.</p>
+
+                    <div class="example">
+                        <h4>Ejemplo 3: Patrón Strategy (Estrategia)</h4>
+                        <textarea id="class-strategy-code">@startuml
+interface PagoStrategy {
+    +procesarPago(monto: decimal): ResultadoPago
+    +validarDatos(): boolean
+    +calcularComision(): decimal
+}
+
+class PagoTarjetaCredito {
+    -numeroTarjeta: String
+    -cvv: String
+    -fechaVencimiento: Date
+    -nombreTitular: String
+    --
+    +procesarPago(monto: decimal): ResultadoPago
+    +validarDatos(): boolean
+    +calcularComision(): decimal
+    -validarNumeroTarjeta(): boolean
+    -verificarFondos(): boolean
+}
+
+class PagoPayPal {
+    -email: String
+    -token: String
+    -apiKey: String
+    --
+    +procesarPago(monto: decimal): ResultadoPago
+    +validarDatos(): boolean
+    +calcularComision(): decimal
+    -autenticarUsuario(): boolean
+    -procesarViaAPI(): boolean
+}
+
+class PagoCriptomoneda {
+    -walletAddress: String
+    -privateKey: String
+    -blockchain: String
+    --
+    +procesarPago(monto: decimal): ResultadoPago
+    +validarDatos(): boolean
+    +calcularComision(): decimal
+    -verificarBalance(): boolean
+    -crearTransaccion(): String
+}
+
+class ProcesadorPagos {
+    -strategy: PagoStrategy
+    -historialTransacciones: List<Transaccion>
+    --
+    +setStrategy(strategy: PagoStrategy): void
+    +ejecutarPago(monto: decimal): ResultadoPago
+    +cambiarMetodoPago(nuevoMetodo: PagoStrategy): void
+}
+
+class ResultadoPago {
+    -exitoso: boolean
+    -mensaje: String
+    -transactionId: String
+    -fecha: DateTime
+    --
+    +esExitoso(): boolean
+    +getMensaje(): String
+}
+
+class Transaccion {
+    -id: String
+    -monto: decimal
+    -fecha: DateTime
+    -metodoPago: String
+    --
+    +getDetalles(): String
+}
+
+' Implementación del patrón
+PagoStrategy <|.. PagoTarjetaCredito
+PagoStrategy <|.. PagoPayPal
+PagoStrategy <|.. PagoCriptomoneda
+
+ProcesadorPagos o-- PagoStrategy : usa >
+ProcesadorPagos --> ResultadoPago : genera >
+ProcesadorPagos *-- Transaccion : almacena >
+
+note top of PagoStrategy
+    Patrón Strategy permite
+    cambiar algoritmos de pago
+    en tiempo de ejecución
+end note
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('class-strategy-code', 'class-strategy-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="class-strategy-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="example">
+                        <h4>Ejemplo 4: Patrón Observer (Observador)</h4>
+                        <textarea id="class-observer-code">@startuml
+interface Observable {
+    +agregarObserver(observer: Observer): void
+    +eliminarObserver(observer: Observer): void
+    +notificarObservers(): void
+}
+
+interface Observer {
+    +actualizar(datos: Object): void
+}
+
+class EstadoPedido {
+    -observers: List<Observer>
+    -estado: String
+    -pedidoId: String
+    -fecha: DateTime
+    --
+    +agregarObserver(observer: Observer): void
+    +eliminarObserver(observer: Observer): void
+    +notificarObservers(): void
+    +cambiarEstado(nuevoEstado: String): void
+    +getEstado(): String
+}
+
+class NotificacionEmail {
+    -servidor: String
+    -puerto: int
+    -usuario: String
+    --
+    +actualizar(datos: Object): void
+    -enviarEmail(destinatario: String, mensaje: String): void
+    -construirMensaje(estado: String): String
+}
+
+class NotificacionSMS {
+    -proveedor: String
+    -apiKey: String
+    --
+    +actualizar(datos: Object): void
+    -enviarSMS(telefono: String, mensaje: String): void
+    -validarNumero(telefono: String): boolean
+}
+
+class NotificacionPush {
+    -tokenDispositivo: String
+    -plataforma: String
+    --
+    +actualizar(datos: Object): void
+    -enviarPush(mensaje: String): void
+    -formatearMensaje(estado: String): String
+}
+
+class LogAuditoria {
+    -archivo: String
+    -nivel: String
+    --
+    +actualizar(datos: Object): void
+    -escribirLog(evento: String): void
+    -formatearFecha(): String
+}
+
+' Implementación del patrón
+Observable <|.. EstadoPedido
+Observer <|.. NotificacionEmail
+Observer <|.. NotificacionSMS  
+Observer <|.. NotificacionPush
+Observer <|.. LogAuditoria
+
+EstadoPedido o-- Observer : notifica >
+
+note right of Observable
+    Patrón Observer permite
+    notificar múltiples objetos
+    sobre cambios de estado
+end note
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('class-observer-code', 'class-observer-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="class-observer-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Clases Abstractas e Interfaces</h3>
+
+                    <div class="example">
+                        <h4>Ejemplo 5: Sistema de Vehículos con Herencia Múltiple</h4>
+                        <textarea id="class-vehicles-code">@startuml
+abstract class Vehiculo {
+    #marca: String
+    #modelo: String
+    #año: int
+    #color: String
+    --
+    +abstract acelerar(): void
+    +abstract frenar(): void
+    +getMarca(): String
+    +getModelo(): String
+    +cambiarColor(nuevoColor: String): void
+}
+
+interface Electrico {
+    +cargarBateria(): void
+    +getNivelBateria(): int
+    +getModoEcoEnergia(): boolean
+}
+
+interface Combustion {
+    +llenarTanque(): void
+    +getNivelCombustible(): int
+    +getTipoGasolina(): String
+}
+
+interface Volador {
+    +despegar(): void
+    +aterrizar(): void
+    +volar(altitud: int): void
+}
+
+class AutoElectrico {
+    -bateria: int
+    -autonomia: int
+    -tiempoRecarga: int
+    --
+    +acelerar(): void
+    +frenar(): void
+    +cargarBateria(): void
+    +getNivelBateria(): int
+    +getModoEcoEnergia(): boolean
+    +calcularAutonomia(): int
+}
+
+class AutoCombustion {
+    -tanqueCombustible: float
+    -consumoPorKm: float
+    -tipoGasolina: String
+    --
+    +acelerar(): void
+    +frenar(): void
+    +llenarTanque(): void
+    +getNivelCombustible(): int
+    +getTipoGasolina(): String
+    +calcularConsumo(): float
+}
+
+class AutoHibrido {
+    -bateria: int
+    -tanqueCombustible: float
+    -modoActual: String
+    --
+    +acelerar(): void
+    +frenar(): void
+    +cargarBateria(): void
+    +getNivelBateria(): int
+    +getModoEcoEnergia(): boolean
+    +llenarTanque(): void
+    +getNivelCombustible(): int
+    +getTipoGasolina(): String
+    +cambiarModo(modo: String): void
+}
+
+class Drone {
+    -bateria: int
+    -alturaMaxima: int
+    -capacidadCarga: float
+    --
+    +acelerar(): void
+    +frenar(): void
+    +cargarBateria(): void
+    +getNivelBateria(): int
+    +getModoEcoEnergia(): boolean
+    +despegar(): void
+    +aterrizar(): void
+    +volar(altitud: int): void
+}
+
+' Herencia
+Vehiculo <|-- AutoElectrico
+Vehiculo <|-- AutoCombustion
+Vehiculo <|-- AutoHibrido
+Vehiculo <|-- Drone
+
+' Implementación de interfaces
+Electrico <|.. AutoElectrico
+Combustion <|.. AutoCombustion
+Electrico <|.. AutoHibrido
+Combustion <|.. AutoHibrido
+Electrico <|.. Drone
+Volador <|.. Drone
+
+note bottom of AutoHibrido
+    Los autos híbridos implementan
+    tanto la interfaz Electrico
+    como Combustion
+end note
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('class-vehicles-code', 'class-vehicles-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="class-vehicles-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Ejercicios Prácticos</h3>
+
+                    <div class="example">
+                        <h4>Ejercicio 1: Sistema de Gestión de Biblioteca</h4>
+                        <p>Completa este diagrama para un sistema de biblioteca con las siguientes especificaciones:</p>
+                        <ul>
+                            <li>Usuarios (pueden ser Estudiantes o Profesores)</li>
+                            <li>Recursos (Libros, Revistas, DVDs)</li>
+                            <li>Sistema de préstamos</li>
+                        </ul>
+                        <textarea id="class-exercise-code">@startuml
+' Completa este diagrama de biblioteca
+abstract class Usuario {
+    #id: int
+    #nombre: String
+    #email: String
+    --
+    +abstract getLimitePrestamos(): int
+}
+
+class Estudiante {
+    ' Completa los atributos específicos
+}
+
+class Profesor {
+    ' Completa los atributos específicos
+}
+
+abstract class Recurso {
+    ' Define atributos base para recursos
+}
+
+class Libro {
+    ' Completa para libros
+}
+
+' Agrega más clases según necesites
+' No olvides las relaciones entre clases
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('class-exercise-code', 'class-exercise-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="class-exercise-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Consejos y Mejores Prácticas</h3>
+                    <div class="tip">
+                        <strong>💡 Tips para Diagramas de Clases:</strong><br>
+                        • Usa nombres descriptivos para clases y métodos<br>
+                        • Aplica principios SOLID en tu diseño<br>
+                        • Separa responsabilidades en clases específicas<br>
+                        • Usa interfaces para definir contratos claros<br>
+                        • Evita herencia múltiple compleja, prefiere composición
+                    </div>
+
+                    <h3>Comandos Útiles Específicos</h3>
+                    <ul>
+                        <li><code>skinparam class</code> : Personaliza apariencia de clases</li>
+                        <li><code>package</code> : Agrupa clases relacionadas</li>
+                        <li><code>namespace</code> : Define espacios de nombres</li>
+                        <li><code>hide/show</code> : Oculta/muestra elementos específicos</li>
+                        <li><code>stereotype</code> : Agrega estereotipos a clases</li>
+                    </ul>
+
+                    <div class="warning">
+                        <strong>⚠️ Errores Comunes:</strong><br>
+                        • Confundir composición (*--) con agregación (o--)<br>
+                        • Usar herencia donde debería ser composición<br>
+                        • No definir correctamente la visibilidad de miembros<br>
+                        • Sobrecargar diagramas con demasiados detalles<br>
+                        • No usar interfaces cuando son necesarias
+                    </div>
+
+                    <div class="info">
+                        <strong>📚 Patrones de Diseño Comunes:</strong><br>
+                        • <strong>Strategy:</strong> Encapsula algoritmos intercambiables<br>
+                        • <strong>Observer:</strong> Notifica cambios a múltiples objetos<br>
+                        • <strong>Factory:</strong> Crea objetos sin especificar la clase exacta<br>
+                        • <strong>Decorator:</strong> Añade funcionalidad a objetos dinámicamente<br>
+                        • <strong>Adapter:</strong> Permite que interfaces incompatibles trabajen juntas
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer style="background: #f8f9fa; padding: 20px; text-align: center; margin-top: 40px; border-top: 1px solid #e0e0e0;">
+        <p style="color: #666; margin: 0;">
+            © 2025 Tutorial PlantUML | 
+            <a href="https://plantuml.com" target="_blank" style="color: #667eea;">Documentación Oficial</a> | 
+            <a href="https://github.com" target="_blank" style="color: #667eea;">GitHub</a>
+        </p>
+        <p style="color: #888; font-size: 0.9em; margin: 10px 0 0 0;">
+            Creado para la comunidad de desarrolladores
+        </p>
+    </footer>
+
+    <script src="../js/main.js"></script>
+</body>
+</html>

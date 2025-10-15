@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutorial Interactivo de PlantUML</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="node_modules/plantuml-encoder/dist/plantuml-encoder.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎨 Tutorial Interactivo de PlantUML</h1>
+            <p>Aprende a crear diagramas UML con código de texto simple</p>
+        </header>
+
+        <div class="content">
+            <div class="sidebar">
+                <button class="nav-button active" data-section="intro">Introducción</button>
+                <a href="pages/sequence.html" class="nav-button" data-section="sequence">Diagramas de Secuencia</a>
+                <a href="pages/class.html" class="nav-button" data-section="class">Diagramas de Clases</a>
+                <a href="pages/usecase.html" class="nav-button" data-section="usecase">Casos de Uso</a>
+                <a href="pages/activity.html" class="nav-button" data-section="activity">Diagramas de Actividad</a>
+                <a href="pages/state.html" class="nav-button" data-section="state">Diagramas de Estado</a>
+                <a href="pages/component.html" class="nav-button" data-section="component">Componentes</a>
+                <a href="pages/tips.html" class="nav-button" data-section="tips">Tips y Trucos</a>
+            </div>
+
+            <div class="main">
+                <div class="breadcrumb">
+                    <span>Inicio</span>
+                </div>
+                
+                <div id="intro" class="section active">
+                    <h2>Bienvenido a PlantUML</h2>
+                    <p>PlantUML es una herramienta de código abierto que te permite crear diagramas UML utilizando un lenguaje de texto simple y descriptivo. En lugar de arrastrar elementos gráficos, escribes código y PlantUML genera el diagrama automáticamente.</p>
+                    
+                    <h3>¿Por qué usar PlantUML?</h3>
+                    <ul>
+                        <li><strong>Versionable:</strong> Al ser texto plano, puedes usar Git para versionar tus diagramas</li>
+                        <li><strong>Rápido:</strong> Escribir código es más rápido que arrastrar elementos</li>
+                        <li><strong>Consistente:</strong> El estilo es uniforme en todos los diagramas</li>
+                        <li><strong>Integrable:</strong> Funciona con documentación, wikis y IDEs</li>
+                    </ul>
+
+                    <h3>Sintaxis Básica</h3>
+                    <p>Todos los diagramas PlantUML comienzan con <code>@startuml</code> y terminan con <code>@enduml</code>.</p>
+
+                    <div class="example">
+                        <h4>Ejemplo: Tu primer diagrama</h4>
+                        <textarea id="intro-code">@startuml
+Alice -> Bob: Hola Bob
+Bob --> Alice: Hola Alice
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('intro-code', 'intro-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="intro-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama" para ver el resultado</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tip">
+                        <strong>💡 Tip:</strong> Edita el código en el cuadro de texto y haz clic en el botón para ver los cambios en tiempo real.
+                    </div>
+
+                    <div class="info">
+                        <strong>🚀 Comienza tu aprendizaje:</strong><br>
+                        Utiliza la navegación de la izquierda para explorar cada tipo de diagrama. Cada sección incluye ejemplos interactivos que puedes modificar y ver en tiempo real.
+                    </div>
+
+                    <h3>Estructura del Tutorial</h3>
+                    <ul>
+                        <li><strong>Diagramas de Secuencia:</strong> Interacciones entre objetos a través del tiempo</li>
+                        <li><strong>Diagramas de Clases:</strong> Estructura de clases, atributos y relaciones</li>
+                        <li><strong>Casos de Uso:</strong> Funcionalidades desde la perspectiva del usuario</li>
+                        <li><strong>Diagramas de Actividad:</strong> Flujos de trabajo y procesos</li>
+                        <li><strong>Diagramas de Estado:</strong> Estados de objetos y transiciones</li>
+                        <li><strong>Diagramas de Componentes:</strong> Arquitectura de software</li>
+                        <li><strong>Tips y Trucos:</strong> Mejores prácticas y personalización</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer style="background: #f8f9fa; padding: 20px; text-align: center; margin-top: 40px; border-top: 1px solid #e0e0e0;">
+        <p style="color: #666; margin: 0;">
+            © 2025 Tutorial PlantUML | 
+            <a href="https://plantuml.com" target="_blank" style="color: #667eea;">Documentación Oficial</a> | 
+            <a href="https://github.com" target="_blank" style="color: #667eea;">GitHub</a>
+        </p>
+        <p style="color: #888; font-size: 0.9em; margin: 10px 0 0 0;">
+            Creado para la comunidad de desarrolladores.
+        </p>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

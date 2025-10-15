@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagramas de Estado - Tutorial PlantUML</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="../node_modules/plantuml-encoder/dist/plantuml-encoder.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎨 Tutorial Interactivo de PlantUML</h1>
+            <p>Aprende a crear diagramas UML con código de texto simple</p>
+        </header>
+
+        <div class="content">
+            <div class="sidebar">
+                <a href="../index.html" class="nav-button">Introducción</a>
+                <a href="sequence.html" class="nav-button">Diagramas de Secuencia</a>
+                <a href="class.html" class="nav-button">Diagramas de Clases</a>
+                <a href="usecase.html" class="nav-button">Casos de Uso</a>
+                <a href="activity.html" class="nav-button">Diagramas de Actividad</a>
+                <a href="state.html" class="nav-button active">Diagramas de Estado</a>
+                <a href="component.html" class="nav-button">Componentes</a>
+                <a href="tips.html" class="nav-button">Tips y Trucos</a>
+            </div>
+
+            <div class="main">
+                <div class="breadcrumb">
+                    <a href="../index.html">Inicio</a>
+                    <span>></span>
+                    <span>Diagramas de Estado</span>
+                </div>
+                
+                <div class="section active">
+                    <h2>Diagramas de Estado</h2>
+                    <p>Los diagramas de estado muestran los diferentes estados de un objeto y las transiciones entre ellos, describiendo cómo el comportamiento de un objeto cambia en respuesta a eventos externos.</p>
+
+                    <div class="info">
+                        <strong>🎯 Objetivo de aprendizaje:</strong><br>
+                        Al completar esta sección, podrás modelar máquinas de estado complejas con estados anidados, transiciones condicionales y acciones de entrada/salida.
+                    </div>
+
+                    <h3>Elementos Básicos</h3>
+                    <ul>
+                        <li><code>[*]</code> : Estado inicial o final</li>
+                        <li><code>Estado1 --> Estado2</code> : Transición simple</li>
+                        <li><code>Estado1 --> Estado2 : evento</code> : Transición con evento</li>
+                        <li><code>Estado : descripción</code> : Descripción del estado</li>
+                        <li><code>state Estado { }</code> : Estado compuesto</li>
+                        <li><code>--</code> : Separador de regiones concurrentes</li>
+                    </ul>
+
+                    <div class="example">
+                        <h4>Ejemplo 1: Estados de un Pedido Online</h4>
+                        <textarea id="state-basic-code">@startuml
+[*] --> Creado : Cliente crea pedido
+
+Creado --> Confirmado : Pago recibido
+Creado --> Cancelado : Cliente cancela
+
+Confirmado --> EnPreparacion : Almacén procesa
+EnPreparacion --> Enviado : Courier recoge
+Enviado --> EnTransito : En camino
+EnTransito --> Entregado : Cliente recibe
+
+EnPreparacion --> Cancelado : Stock insuficiente
+Enviado --> Devuelto : Cliente rechaza
+Devuelto --> Reembolsado : Pago devuelto
+
+Entregado --> [*]
+Cancelado --> [*]
+Reembolsado --> [*]
+
+Confirmado : Pago verificado\nInventario reservado
+
+EnPreparacion : Empaquetando productos\nGenerando etiqueta
+
+note right of EnTransito
+    El cliente puede rastrear
+    el pedido en tiempo real
+end note
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('state-basic-code', 'state-basic-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="state-basic-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Estados Compuestos y Anidados</h3>
+                    <p>Los estados pueden contener subestados para modelar comportamientos complejos de forma jerárquica.</p>
+
+                    <div class="example">
+                        <h4>Ejemplo 2: Estados de una Llamada Telefónica</h4>
+                        <textarea id="state-nested-code">@startuml
+[*] --> Inactivo
+
+Inactivo --> Marcando : marcar número
+Marcando --> Conectando : número válido
+Marcando --> Inactivo : número inválido
+
+state Conectando {
+    [*] --> Timbrando
+    Timbrando --> Respondida : destinatario responde
+    Timbrando --> Buzón : no responde después de 30s
+    Timbrando --> Ocupado : línea ocupada
+    Buzón --> [*] : colgar después del beep
+}
+
+state EnLlamada {
+    [*] --> Conversando
+    Conversando --> EnEspera : presionar hold
+    EnEspera --> Conversando : retomar llamada
+    Conversando --> TransfiriendoLlamada : transferir
+    TransfiriendoLlamada --> Conversando : transferencia fallida
+    TransfiriendoLlamada --> [*] : transferencia exitosa
+}
+
+Conectando --> EnLlamada : conexión establecida
+Conectando --> Inactivo : conexión fallida
+
+EnLlamada --> Finalizando : cualquier parte cuelga
+Finalizando --> Inactivo : llamada terminada
+
+state Finalizando {
+    [*] --> LiberandoRecursos
+    LiberandoRecursos --> RegistrandoLlamada
+    RegistrandoLlamada --> [*]
+}
+
+note right of EnLlamada
+    Durante la llamada se pueden
+    realizar múltiples operaciones
+    como transferir o poner en espera
+end note
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('state-nested-code', 'state-nested-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="state-nested-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Estados Concurrentes</h3>
+                    <p>Un objeto puede estar en múltiples estados al mismo tiempo usando regiones paralelas.</p>
+
+                    <div class="example">
+                        <h4>Ejemplo 3: Sistema de Reproductor de Música</h4>
+                        <textarea id="state-concurrent-code">@startuml
+[*] --> Funcionando
+
+state Funcionando {
+    
+    state "Control de Reproducción" as Reproduccion {
+        [*] --> Detenido
+        Detenido --> Reproduciendo : play
+        Reproduciendo --> Pausado : pause
+        Pausado --> Reproduciendo : resume
+        Reproduciendo --> Detenido : stop
+        Pausado --> Detenido : stop
+        
+        Reproduciendo : Canción actual sonando\nActualizar progreso
+        Pausado : Reproducción pausada\nMostrar tiempo actual
+    }
+    
+    --
+    
+    state "Control de Volumen" as Volumen {
+        [*] --> VolumenNormal
+        VolumenNormal --> VolumenBajo : disminuir
+        VolumenBajo --> Silenciado : silenciar
+        Silenciado --> VolumenBajo : activar sonido
+        VolumenBajo --> VolumenNormal : aumentar
+        VolumenNormal --> VolumenAlto : aumentar
+        VolumenAlto --> VolumenNormal : disminuir
+        
+        VolumenAlto : Volumen > 75%
+        VolumenNormal : Volumen 25-75%
+        VolumenBajo : Volumen < 25%
+        Silenciado : Volumen = 0%
+    }
+    
+    --
+    
+    state "Modo de Reproducción" as Modo {
+        [*] --> Secuencial
+        Secuencial --> Aleatorio : activar shuffle
+        Aleatorio --> Secuencial : desactivar shuffle
+        Secuencial --> Repetir : activar repeat
+        Repetir --> RepetirUno : cambiar modo
+        RepetirUno --> Secuencial : desactivar repeat
+        
+        Secuencial : Reproducir en orden\nde la lista
+        Aleatorio : Orden aleatorio
+        Repetir : Repetir toda la lista
+        RepetirUno : Repetir canción actual
+    }
+}
+
+Funcionando --> [*] : apagar dispositivo
+
+note bottom of Funcionando
+    Las tres regiones funcionan
+    de manera independiente y
+    concurrente entre sí
+end note
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('state-concurrent-code', 'state-concurrent-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="state-concurrent-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Transiciones con Condiciones y Acciones</h3>
+
+                    <div class="example">
+                        <h4>Ejemplo 4: Máquina Expendedora con Lógica Compleja</h4>
+                        <textarea id="state-conditions-code">@startuml
+[*] --> Esperando
+
+Esperando --> SeleccionandoProducto : insertar dinero / mostrar_productos()
+Esperando : Pantalla: "Insertar monedas"
+
+state SeleccionandoProducto {
+    [*] --> MostrandoCatalogo
+    MostrandoCatalogo --> ProductoSeleccionado : seleccionar producto
+    ProductoSeleccionado --> VerificandoPago : confirmar selección
+    ProductoSeleccionado --> MostrandoCatalogo : cancelar selección
+}
+
+VerificandoPago --> Dispensando : [dinero >= precio] / procesar_pago()
+VerificandoPago --> InsertarMasDinero : [dinero < precio] / mostrar_faltante()
+VerificandoPago --> Esperando : cancelar / devolver_dinero()
+
+InsertarMasDinero --> VerificandoPago : insertar más dinero / actualizar_total()
+InsertarMasDinero --> Esperando : cancelar / devolver_dinero()
+
+state Dispensando {
+    [*] --> VerificandoInventario
+    VerificandoInventario --> DispenstandoProducto : [stock > 0] / activar_motor()
+    VerificandoInventario --> ProductoAgotado : [stock = 0] / mostrar_agotado()
+    
+    DispenstandoProducto --> EntregandoCambio : producto dispensado / calcular_cambio()
+    ProductoAgotado --> SeleccionOtroProducto : timeout(5s) / volver_catalogo()
+}
+
+EntregandoCambio --> Esperando : [cambio = 0] / transaccion_completa()
+EntregandoCambio --> DispenstandoCambio : [cambio > 0] / activar_dispensador_cambio()
+DispenstandoCambio --> Esperando : cambio entregado / transaccion_completa()
+
+SeleccionOtroProducto --> SeleccionandoProducto : seleccionar otro producto
+SeleccionOtroProducto --> Esperando : cancelar / devolver_dinero()
+
+' Estados de error y mantenimiento
+Esperando --> ErrorSistema : fallo_crítico / activar_alarma()
+ErrorSistema --> Mantenimiento : técnico_presente / desactivar_alarma()
+Mantenimiento --> Esperando : reiniciar_sistema / verificar_funcionamiento()
+
+note right of VerificandoPago
+    entry / validar_dinero_insertado()
+    do / actualizar_display_continuamente()
+    exit / limpiar_display_temporal()
+end note
+
+note bottom of Dispensando
+    Maneja tanto la entrega
+    del producto como posibles
+    errores de inventario
+end note
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('state-conditions-code', 'state-conditions-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="state-conditions-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Estados de Conexión de Red</h3>
+
+                    <div class="example">
+                        <h4>Ejemplo 5: Protocolo de Conexión TCP</h4>
+                        <textarea id="state-tcp-code">@startuml
+[*] --> Cerrado
+
+Cerrado --> Escuchando : bind() y listen()
+Cerrado --> SynEnviado : connect() / enviar_SYN
+
+Escuchando --> SynRecibido : recibir_SYN / enviar_SYN+ACK
+Escuchando --> Cerrado : close()
+
+SynEnviado --> Establecido : recibir_SYN+ACK / enviar_ACK
+SynEnviado --> Cerrado : timeout / enviar_RST
+SynEnviado --> SynEnviado : retransmitir_SYN [intentos < 3]
+
+SynRecibido --> Establecido : recibir_ACK
+SynRecibido --> Escuchando : timeout o RST
+
+state Establecido {
+    [*] --> TransmisiónNormal
+    TransmisiónNormal --> TransmisiónNormal : enviar_datos / ack_recibido
+    TransmisiónNormal --> EsperandoACK : enviar_datos / no_ack
+    EsperandoACK --> TransmisiónNormal : recibir_ACK
+    EsperandoACK --> Retransmitiendo : timeout
+    Retransmitiendo --> TransmisiónNormal : recibir_ACK
+    Retransmitiendo --> Retransmitiendo : timeout [intentos < 5]
+    Retransmitiendo --> [*] : timeout [intentos >= 5] / cerrar_conexión
+}
+
+Establecido --> FinWait1 : close() / enviar_FIN
+Establecido --> CloseWait : recibir_FIN / enviar_ACK
+
+FinWait1 --> FinWait2 : recibir_ACK
+FinWait1 --> Closing : recibir_FIN / enviar_ACK
+FinWait1 --> TimeWait : recibir_FIN+ACK / enviar_ACK
+
+FinWait2 --> TimeWait : recibir_FIN / enviar_ACK
+
+CloseWait --> LastAck : close() / enviar_FIN
+LastAck --> Cerrado : recibir_ACK
+
+Closing --> TimeWait : recibir_ACK
+
+TimeWait --> Cerrado : timeout(2MSL)
+
+' Estados de error
+Establecido --> Cerrado : recibir_RST
+SynEnviado --> Cerrado : recibir_RST
+SynRecibido --> Cerrado : recibir_RST
+
+note right of Establecido
+    entry / habilitar_transferencia_datos()
+    do / mantener_keepalive()
+    exit / limpiar_buffers()
+end note
+
+note bottom of TimeWait
+    Espera 2*MSL (Maximum Segment Lifetime)
+    para asegurar que todos los paquetes
+    retrasados sean descartados
+end note
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('state-tcp-code', 'state-tcp-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="state-tcp-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Ejercicios Prácticos</h3>
+
+                    <div class="example">
+                        <h4>Ejercicio 1: Estados de un Semáforo Inteligente</h4>
+                        <p>Completa este diagrama para un semáforo que incluya:</p>
+                        <ul>
+                            <li>Estados normales (Verde, Amarillo, Rojo)</li>
+                            <li>Modo nocturno (Intermitente)</li>
+                            <li>Modo de emergencia</li>
+                            <li>Sensores de tráfico que modifiquen los tiempos</li>
+                        </ul>
+                        <textarea id="state-exercise-code">@startuml
+[*] --> Inicializando
+
+Inicializando --> ModoNormal : sistema_listo
+
+state ModoNormal {
+    [*] --> Verde
+    Verde --> Amarillo : timeout(30s) o [trafico_intenso and timeout(20s)]
+    Amarillo --> Rojo : timeout(5s)
+    Rojo --> Verde : timeout(25s) o [sin_trafico and timeout(15s)]
+    
+    ' Completa con lógica de sensores
+    ' Verde : entry / activar_luz_verde()
+    ' Amarillo : do / parpadear_si_peatones_esperando()
+}
+
+' Agrega estados para modo nocturno y emergencia
+' ModoNormal --> ModoNocturno : [hora >= 22:00]
+' ModoNocturno --> ModoNormal : [hora >= 06:00]
+
+' Agrega transiciones de emergencia
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('state-exercise-code', 'state-exercise-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="state-exercise-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Consejos y Mejores Prácticas</h3>
+                    <div class="tip">
+                        <strong>💡 Tips para Diagramas de Estado:</strong><br>
+                        • Identifica todos los estados posibles del objeto<br>
+                        • Usa nombres de estados que describan el comportamiento<br>
+                        • Define claramente los eventos que causan transiciones<br>
+                        • Incluye condiciones de guarda cuando sea necesario<br>
+                        • Usa estados compuestos para reducir complejidad visual
+                    </div>
+
+                    <h3>Elementos Avanzados</h3>
+                    <ul>
+                        <li><code>entry / acción</code> : Acción al entrar al estado</li>
+                        <li><code>exit / acción</code> : Acción al salir del estado</li>
+                        <li><code>do / actividad</code> : Actividad continua en el estado</li>
+                        <li><code>[condición]</code> : Condición de guarda</li>
+                        <li><code>evento / acción</code> : Acción en la transición</li>
+                        <li><code>after(tiempo)</code> : Evento temporal</li>
+                        <li><code>history</code> : Estados de historia</li>
+                    </ul>
+
+                    <h3>Comandos Útiles Específicos</h3>
+                    <ul>
+                        <li><code>skinparam state</code> : Personaliza apariencia de estados</li>
+                        <li><code>hide empty description</code> : Oculta descripciones vacías</li>
+                        <li><code>direction</code> : Cambia dirección del diagrama</li>
+                        <li><code>scale</code> : Ajusta tamaño del diagrama</li>
+                        <li><code>!theme</code> : Aplica temas predefinidos</li>
+                    </ul>
+
+                    <div class="warning">
+                        <strong>⚠️ Errores Comunes:</strong><br>
+                        • No definir estado inicial o final claramente<br>
+                        • Crear transiciones sin eventos o condiciones<br>
+                        • Olvidar estados de error o excepciones<br>
+                        • Sobrecomplicar con demasiados estados anidados<br>
+                        • No considerar todas las transiciones posibles
+                    </div>
+
+                    <div class="info">
+                        <strong>🎯 Aplicaciones Comunes:</strong><br>
+                        • <strong>Protocolos de red:</strong> TCP/IP, HTTP, WebSocket<br>
+                        • <strong>Interfaces de usuario:</strong> Navegación entre pantallas<br>
+                        • <strong>Procesos de negocio:</strong> Estados de pedidos, facturas<br>
+                        • <strong>Sistemas embebidos:</strong> Control de dispositivos<br>
+                        • <strong>Videojuegos:</strong> Estados de personajes, IA
+                    </div>
+
+                    <div class="info">
+                        <strong>📋 Proceso de Diseño:</strong><br>
+                        1. <strong>Identificar objeto:</strong> ¿Qué entidad cambia de estado?<br>
+                        2. <strong>Listar estados:</strong> ¿Cuáles son los estados posibles?<br>
+                        3. <strong>Definir eventos:</strong> ¿Qué causa las transiciones?<br>
+                        4. <strong>Establecer condiciones:</strong> ¿Cuándo ocurren las transiciones?<br>
+                        5. <strong>Agregar acciones:</strong> ¿Qué se hace en cada transición/estado?
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer style="background: #f8f9fa; padding: 20px; text-align: center; margin-top: 40px; border-top: 1px solid #e0e0e0;">
+        <p style="color: #666; margin: 0;">
+            © 2025 Tutorial PlantUML | 
+            <a href="https://plantuml.com" target="_blank" style="color: #667eea;">Documentación Oficial</a> | 
+            <a href="https://github.com" target="_blank" style="color: #667eea;">GitHub</a>
+        </p>
+        <p style="color: #888; font-size: 0.9em; margin: 10px 0 0 0;">
+            Creado para la comunidad de desarrolladores
+        </p>
+    </footer>
+
+    <script src="../js/main.js"></script>
+</body>
+</html>

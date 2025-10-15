@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagramas de Secuencia - Tutorial PlantUML</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="../node_modules/plantuml-encoder/dist/plantuml-encoder.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎨 Tutorial Interactivo de PlantUML</h1>
+            <p>Aprende a crear diagramas UML con código de texto simple</p>
+        </header>
+
+        <div class="content">
+            <div class="sidebar">
+                <a href="../index.html" class="nav-button">Introducción</a>
+                <a href="sequence.html" class="nav-button active">Diagramas de Secuencia</a>
+                <a href="class.html" class="nav-button">Diagramas de Clases</a>
+                <a href="usecase.html" class="nav-button">Casos de Uso</a>
+                <a href="activity.html" class="nav-button">Diagramas de Actividad</a>
+                <a href="state.html" class="nav-button">Diagramas de Estado</a>
+                <a href="component.html" class="nav-button">Componentes</a>
+                <a href="tips.html" class="nav-button">Tips y Trucos</a>
+            </div>
+
+            <div class="main">
+                <div class="breadcrumb">
+                    <a href="../index.html">Inicio</a>
+                    <span>></span>
+                    <span>Diagramas de Secuencia</span>
+                </div>
+                
+                <div class="section active">
+                    <h2>Diagramas de Secuencia</h2>
+                    <p>Los diagramas de secuencia muestran cómo los objetos interactúan entre sí a través del tiempo, representando el flujo de mensajes en un orden secuencial específico.</p>
+
+                    <div class="info">
+                        <strong>🎯 Objetivo de aprendizaje:</strong><br>
+                        Al completar esta sección, serás capaz de crear diagramas de secuencia que representen interacciones complejas entre múltiples actores y sistemas.
+                    </div>
+
+                    <h3>Elementos Básicos</h3>
+                    <ul>
+                        <li><code>-></code> : Mensaje síncrono (línea sólida con flecha)</li>
+                        <li><code>--></code> : Mensaje de respuesta (línea punteada con flecha)</li>
+                        <li><code>participant</code> : Define un participante explícitamente</li>
+                        <li><code>actor</code> : Define un actor (usuario humano)</li>
+                        <li><code>activate/deactivate</code> : Controla el tiempo de vida</li>
+                        <li><code>note left/right</code> : Agrega notas explicativas</li>
+                    </ul>
+
+                    <div class="example">
+                        <h4>Ejemplo 1: Sistema de Login Básico</h4>
+                        <textarea id="seq-basic-code">
+@startuml
+participant Usuario
+participant "Sistema Web" as Web
+participant "Base de Datos" as DB
+
+Usuario -> Web: Ingresar credenciales 
+activate Web
+
+Web -> DB: Validar usuario
+activate DB
+DB --> Web: Usuario válido
+deactivate DB
+
+Web --> Usuario: Mostrar dashboard
+deactivate Web
+
+note right of Usuario
+  El usuario ahora
+  está autenticado
+end note
+@enduml
+</textarea>
+                        <button class="render-btn" onclick="renderDiagram('seq-basic-code', 'seq-basic-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="seq-basic-preview" style="width: 100%;">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Características Avanzadas</h3>
+                    
+                    <h4>Estructuras Condicionales y Bucles</h4>
+                    <p>PlantUML permite representar lógica compleja usando <code>alt/else</code>, <code>loop</code>, <code>opt</code>, y <code>par</code>.</p>
+
+                    <div class="example">
+                        <h4>Ejemplo 2: Autenticación con Alternativas y Bucles</h4>
+                        <textarea id="seq-advanced-code">@startuml
+actor Cliente
+participant "API Gateway" as API
+participant "Servicio Auth" as Auth
+database Redis
+participant "Servicio Email" as Email
+
+Cliente -> API: POST /login
+API -> Auth: Verificar credenciales
+
+alt credenciales válidas
+    Auth -> Redis: Guardar sesión
+    Redis --> Auth: OK
+    Auth --> API: Token JWT
+    API --> Cliente: 200 OK + Token
+    
+    opt notificación habilitada
+        Auth -> Email: Enviar notificación de login
+        Email --> Auth: Email enviado
+    end
+    
+else credenciales inválidas
+    Auth --> API: Error de autenticación
+    API --> Cliente: 401 Unauthorized
+    
+    note right of Cliente
+        Después de 3 intentos
+        fallidos, la cuenta
+        se bloquea temporalmente
+    end note
+end
+
+loop cada 5 minutos
+    Cliente -> API: Refresh token
+    API -> Auth: Validar token
+    
+    alt token válido
+        Auth --> API: Nuevo token
+        API --> Cliente: Token renovado
+    else token expirado
+        API --> Cliente: 401 Token expirado
+        Cliente -> API: Redirigir a login
+    end
+end
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('seq-advanced-code', 'seq-advanced-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="seq-advanced-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Procesamiento Paralelo</h3>
+                    <p>Usa <code>par</code> para mostrar procesos que ocurren simultáneamente.</p>
+
+                    <div class="example">
+                        <h4>Ejemplo 3: Procesamiento de Pedido con Paralelismo</h4>
+                        <textarea id="seq-parallel-code">@startuml
+actor Cliente
+participant "E-commerce API" as API
+participant "Servicio Inventario" as Inventory
+participant "Servicio Pago" as Payment
+participant "Servicio Envío" as Shipping
+participant "Servicio Email" as Email
+
+Cliente -> API: Confirmar pedido
+API -> API: Validar datos del pedido
+
+par Procesar Pago
+    API -> Payment: Procesar pago
+    Payment -> Payment: Validar tarjeta
+    Payment --> API: Pago confirmado
+and Reservar Inventario
+    API -> Inventory: Reservar productos
+    Inventory -> Inventory: Verificar stock
+    Inventory --> API: Items reservados
+and Calcular Envío
+    API -> Shipping: Calcular costo de envío
+    Shipping -> Shipping: Determinar método
+    Shipping --> API: Costo calculado
+end
+
+API -> API: Generar número de pedido
+
+fork
+    API -> Email: Enviar confirmación
+    Email --> Cliente: Email de confirmación
+fork again
+    API -> Shipping: Programar envío
+    Shipping --> API: Envío programado
+end fork
+
+API --> Cliente: Pedido confirmado
+
+note right of Cliente
+    Todos los procesos se
+    ejecutan en paralelo
+    para mayor eficiencia
+end note
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('seq-parallel-code', 'seq-parallel-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="seq-parallel-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Manejo de Errores y Timeouts</h3>
+
+                    <div class="example">
+                        <h4>Ejemplo 4: Sistema con Manejo de Errores</h4>
+                        <textarea id="seq-error-code">@startuml
+actor Usuario
+participant "Frontend" as UI
+participant "API Gateway" as Gateway
+participant "Microservicio" as Service
+database "Base de Datos" as DB
+
+Usuario -> UI: Solicitar datos
+UI -> Gateway: GET /api/data
+activate Gateway
+
+Gateway -> Service: Obtener datos
+activate Service
+
+Service -> DB: SELECT * FROM table
+activate DB
+
+alt respuesta exitosa
+    DB --> Service: Datos encontrados
+    deactivate DB
+    Service --> Gateway: 200 OK + datos
+    deactivate Service
+    Gateway --> UI: Datos procesados
+    deactivate Gateway
+    UI --> Usuario: Mostrar información
+    
+else timeout de base de datos
+    DB -x Service: Timeout (5s)
+    deactivate DB
+    Service --> Gateway: 504 Gateway Timeout
+    deactivate Service
+    Gateway --> UI: Error de timeout
+    deactivate Gateway
+    UI --> Usuario: "Servicio no disponible"
+    
+else error de conexión
+    Service -x Gateway: Connection refused
+    deactivate Service
+    Gateway --> UI: 502 Bad Gateway
+    deactivate Gateway
+    UI --> Usuario: "Error de servidor"
+end
+
+note over Usuario, DB
+    El sistema maneja
+    diferentes tipos de
+    errores graciosamente
+end note
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('seq-error-code', 'seq-error-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="seq-error-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Ejercicios Prácticos</h3>
+
+                    <div class="example">
+                        <h4>Ejercicio 1: Crea tu propio diagrama</h4>
+                        <p>Modifica el siguiente código para representar un sistema de reserva de hotel:</p>
+                        <textarea id="seq-exercise-code">@startuml
+' Completa este diagrama para un sistema de reserva de hotel
+' Incluye: Cliente, Sistema de Reservas, Base de Datos, Servicio de Pago
+
+actor Cliente
+participant "Sistema Reservas" as Sistema
+' Agrega más participantes aquí
+
+Cliente -> Sistema: Buscar habitaciones disponibles
+' Completa el resto del flujo
+@enduml</textarea>
+                        <button class="render-btn" onclick="renderDiagram('seq-exercise-code', 'seq-exercise-preview')">🎨 Renderizar Diagrama</button>
+                        <div class="editor-container">
+                            <div></div>
+                            <div class="preview" id="seq-exercise-preview">
+                                <span class="loading">Haz clic en "Renderizar Diagrama"</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Consejos y Mejores Prácticas</h3>
+                    <div class="tip">
+                        <strong>💡 Tips para Diagramas de Secuencia:</strong><br>
+                        • Usa nombres descriptivos para participantes<br>
+                        • Mantén el flujo de izquierda a derecha<br>
+                        • Agrupa mensajes relacionados con activate/deactivate<br>
+                        • Usa notas para aclarar lógica compleja<br>
+                        • No sobrecargues el diagrama con demasiados detalles
+                    </div>
+
+                    <h3>Comandos Útiles Específicos</h3>
+                    <ul>
+                        <li><code>autonumber</code> : Numera automáticamente los mensajes</li>
+                        <li><code>title</code> : Agrega título al diagrama</li>
+                        <li><code>skinparam sequence</code> : Personaliza la apariencia</li>
+                        <li><code>ref over</code> : Referencia a otro diagrama</li>
+                        <li><code>delay</code> : Indica tiempo transcurrido</li>
+                    </ul>
+
+                    <div class="warning">
+                        <strong>⚠️ Errores Comunes:</strong><br>
+                        • Olvidar cerrar bloques (alt, loop, par)<br>
+                        • No usar activate/deactivate consistentemente<br>
+                        • Mezclar diferentes estilos de flechas sin propósito<br>
+                        • Crear diagramas demasiado complejos para una sola vista
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer style="background: #f8f9fa; padding: 20px; text-align: center; margin-top: 40px; border-top: 1px solid #e0e0e0;">
+        <p style="color: #666; margin: 0;">
+            © 2025 Tutorial PlantUML | 
+            <a href="https://plantuml.com" target="_blank" style="color: #667eea;">Documentación Oficial</a> | 
+            <a href="https://github.com" target="_blank" style="color: #667eea;">GitHub</a>
+        </p>
+        <p style="color: #888; font-size: 0.9em; margin: 10px 0 0 0;">
+            Creado para la comunidad de desarrolladores
+        </p>
+    </footer>
+
+    <script src="../js/main.js"></script>
+</body>
+</html>
